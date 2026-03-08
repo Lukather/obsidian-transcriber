@@ -233,6 +233,56 @@ describe('OllamaService', () => {
         })
     })
 
+    describe('deleteModel', () => {
+        test('sends DELETE request to correct endpoint', async () => {
+            mockRequest.mockResolvedValue({
+                status: 200,
+                json: {}
+            } as unknown as RequestUrlResponse)
+
+            await service.deleteModel('qwen3.5:9b')
+
+            expect(mockRequest).toHaveBeenCalledTimes(1)
+            const callArgs = mockRequest.mock.calls[0]![0] as {
+                url: string
+                method: string
+                body: string
+            }
+            expect(callArgs.url).toBe('http://localhost:11434/api/delete')
+            expect(callArgs.method).toBe('DELETE')
+            const parsed = JSON.parse(callArgs.body) as { model: string }
+            expect(parsed.model).toBe('qwen3.5:9b')
+        })
+
+        test('throws on non-ok response with error message', async () => {
+            mockRequest.mockResolvedValue({
+                status: 404,
+                json: { error: 'model "bad-model" not found' }
+            } as unknown as RequestUrlResponse)
+
+            try {
+                await service.deleteModel('bad-model')
+                expect.unreachable('Should have thrown')
+            } catch (error) {
+                expect((error as Error).message).toBe('model "bad-model" not found')
+            }
+        })
+
+        test('throws with status code when no error message', async () => {
+            mockRequest.mockResolvedValue({
+                status: 500,
+                json: {}
+            } as unknown as RequestUrlResponse)
+
+            try {
+                await service.deleteModel('some-model')
+                expect.unreachable('Should have thrown')
+            } catch (error) {
+                expect((error as Error).message).toContain('Ollama returned 500')
+            }
+        })
+    })
+
     describe('updateConfig', () => {
         test('updates base URL and model', async () => {
             mockRequest.mockResolvedValue({

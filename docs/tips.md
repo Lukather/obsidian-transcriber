@@ -9,7 +9,7 @@
 
 Smaller models are faster but may struggle with handwriting, complex layouts, or low-quality images.
 
-You can install any of these directly from **Settings > Transcriber** without using the command line.
+You can install any of these from the command palette (**Install AI model**) or from **Settings > Transcriber** — no terminal needed.
 
 ## Getting Better Results
 
@@ -38,7 +38,7 @@ You can install any of these directly from **Settings > Transcriber** without us
 
 ### "Model not found" error
 
-- Install the model from **Settings > Transcriber** (recommended models section or custom model field)
+- Run **Install AI model** from the command palette, or install from **Settings > Transcriber**
 - Alternatively, pull via CLI: `ollama pull qwen3.5:9b` (replace with your chosen model)
 - Check for typos in the model name if using a custom model
 

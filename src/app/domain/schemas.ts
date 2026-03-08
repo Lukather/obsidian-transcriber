@@ -28,3 +28,8 @@ export const ollamaPullProgressSchema = z.object({
     total: z.number().optional(),
     completed: z.number().optional()
 })
+
+export const ollamaDeleteResponseSchema = z.object({
+    status: z.string().optional(),
+    error: z.string().optional()
+})

@@ -22,6 +22,8 @@
 - `OllamaChatResponse` — Response with model, message content, done flag
 - `OllamaTagsResponse` — List of available models from `/api/tags`
 - `OllamaModelInfo` — Individual model metadata (name, size, modified_at)
+- `OllamaPullProgress` — Streaming progress during model pull (status, digest, total, completed)
+- `OllamaDeleteResponse` — Response from `/api/delete` (status, error)
 
 ## ConnectionTestResult
 

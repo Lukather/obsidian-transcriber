@@ -2,9 +2,14 @@
 
 ## Commands
 
-| Command                  | Description                                                                      |
-| ------------------------ | -------------------------------------------------------------------------------- |
-| Transcribe current image | Transcribes the currently active image file. Only appears when an image is open. |
+All commands are available via the command palette (Ctrl/Cmd+P).
+
+| Command                  | Description                                                                                        |
+| ------------------------ | -------------------------------------------------------------------------------------------------- |
+| Transcribe current image | Transcribes the currently active image file. Only appears when an image is open.                   |
+| Install AI model         | Opens a picker to download a model from Ollama. Lists recommended models and accepts custom names. |
+| Select AI model          | Opens a picker to choose which installed model to use for transcription.                           |
+| Remove AI model          | Opens a picker to delete an installed model from Ollama.                                           |
 
 ## Context Menu
 
@@ -12,6 +17,32 @@ Right-click in the file explorer to access transcription actions:
 
 - **On an image file**: "Transcribe image" — transcribes that single image
 - **On a folder**: "Transcribe all images in folder" — batch-transcribes all images in the folder
+
+## Model Management
+
+You can manage AI models entirely from the command palette — no terminal needed.
+
+### Installing a model
+
+1. Open the command palette and run **Install AI model**
+2. Select a recommended model from the list, or type any Ollama model name (e.g. `llava:13b`)
+3. A progress notice shows download status with percentage
+4. Once installed, the model is automatically selected for transcription
+
+You can also install models from **Settings > Transcriber** using the recommended models list or the custom model field.
+
+### Selecting a model
+
+1. Open the command palette and run **Select AI model**
+2. The picker shows all models installed in Ollama
+3. The currently selected model is marked
+4. Pick a model to switch to it immediately
+
+### Removing a model
+
+1. Open the command palette and run **Remove AI model**
+2. The picker shows all models installed in Ollama
+3. Select a model to delete it from Ollama and free disk space
 
 ## Transcribing a Single Image
 

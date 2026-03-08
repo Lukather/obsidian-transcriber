@@ -6,6 +6,7 @@ Transcriber converts images in your Obsidian vault to Markdown using Ollama visi
 
 - Transcribe individual images or entire folders in batch
 - Output `.md` files are created alongside source images
+- Install, select, and remove AI models directly from the command palette
 - Configurable vision model and transcription prompt
 - Progress notifications for batch operations
 - No cloud dependency — everything runs locally via Ollama
@@ -15,7 +16,7 @@ Transcriber converts images in your Obsidian vault to Markdown using Ollama visi
 1. Install and enable the plugin
 2. Ensure [Ollama](https://ollama.com/) is running
 3. Open **Settings > Transcriber** and click **Test** to verify the connection
-4. Install a recommended model from the settings (e.g. `qwen3.5:9b`), or select one already installed
+4. Install a model: open the command palette and run **Install AI model**, or install from settings
 5. Right-click an image in the file explorer and select **Transcribe image**
 
 ## About

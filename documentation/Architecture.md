@@ -16,7 +16,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 ### Services (`src/app/services/`)
 
-- **OllamaService** — HTTP client for Ollama's REST API (`/api/tags`, `/api/chat`). Uses Obsidian's `requestUrl`. Accepts an optional `RequestFn` for testability.
+- **OllamaService** — HTTP client for Ollama's REST API (`/api/tags`, `/api/chat`, `/api/pull`, `/api/delete`). Uses Obsidian's `requestUrl`. Accepts an optional `RequestFn` for testability.
 - **TranscriptionService** — Orchestrates transcription. Reads images from the vault, calls OllamaService, writes Markdown output. Handles batch operations with concurrency limiting.
 
 ### Commands (`src/app/commands/`)
@@ -24,6 +24,9 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 - **register-commands.ts** — Registers command palette commands
 - **register-events.ts** — Registers context menu (file-menu) events for files and folders
 - **transcribe-image-command.ts** — `transcribe-current-image` command (checkCallback, active only on image files)
+- **install-model-command.ts** — `install-model` command with SuggestModal for downloading models from Ollama
+- **select-model-command.ts** — `select-model` command with SuggestModal to pick from installed models
+- **remove-model-command.ts** — `remove-model` command with SuggestModal to delete installed models
 
 ### Settings (`src/app/settings/`)
 

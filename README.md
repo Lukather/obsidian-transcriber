@@ -9,6 +9,7 @@ Point it at any image in your vault and get structured Markdown back — heading
 - **Transcribe a single image** via the command palette or right-click context menu
 - **Batch-transcribe an entire folder** of images (with optional subfolder inclusion)
 - **Creates a `.md` file** alongside each image with the transcribed content
+- **Install, select, and remove AI models** directly from the command palette — no terminal needed
 - **Progress tracking** for batch operations with per-file status
 - **Configurable prompt** so you can tailor the transcription instructions
 
@@ -31,7 +32,7 @@ Any other Ollama vision model can be installed directly from the settings or via
 2. Enable it
 3. Open **Settings > Transcriber** and verify the Ollama server URL (default: `http://localhost:11434`)
 4. Click **Test** to confirm the connection
-5. Install a recommended model from the settings, or choose one already installed
+5. Install a model: open the command palette (Ctrl/Cmd+P) and run **Install AI model**, or install from settings
 6. Right-click any image in your vault and select **Transcribe image**
 
 ## Documentation

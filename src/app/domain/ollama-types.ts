@@ -33,3 +33,8 @@ export interface OllamaPullProgress {
     total?: number
     completed?: number
 }
+
+export interface OllamaDeleteResponse {
+    status?: string
+    error?: string
+}

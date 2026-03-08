@@ -4,12 +4,14 @@ import { log } from '../../utils/log'
 import { arrayBufferToBase64 } from '../../utils/base64'
 import {
     ollamaChatResponseSchema,
+    ollamaDeleteResponseSchema,
     ollamaPullProgressSchema,
     ollamaTagsResponseSchema
 } from '../domain/schemas'
 import type {
     OllamaChatRequest,
     OllamaChatResponse,
+    OllamaDeleteResponse,
     OllamaPullProgress,
     OllamaTagsResponse
 } from '../domain/ollama-types'
@@ -132,6 +134,26 @@ export class OllamaService {
         }
 
         log(`Model ${modelName} pulled successfully`, 'debug')
+    }
+
+    async deleteModel(modelName: string): Promise<void> {
+        log(`Deleting model ${modelName} from ${this.baseUrl}`, 'debug')
+
+        const response = await this.requestFn({
+            url: `${this.baseUrl}/api/delete`,
+            method: 'DELETE',
+            contentType: 'application/json',
+            body: JSON.stringify({ model: modelName }),
+            throw: false
+        })
+
+        if (response.status !== 200) {
+            const data: unknown = response.json
+            const parsed: OllamaDeleteResponse = ollamaDeleteResponseSchema.parse(data)
+            throw new Error(parsed.error ?? `Ollama returned ${response.status}`)
+        }
+
+        log(`Model ${modelName} deleted successfully`, 'debug')
     }
 
     async transcribeImage(imageData: ArrayBuffer, prompt: string): Promise<string> {

@@ -14,6 +14,11 @@ All settings are available under **Settings > Transcriber**.
 
 ### Model management
 
+Models can be managed in two ways:
+
+1. **Command palette** — Use the **Install AI model**, **Select AI model**, and **Remove AI model** commands for quick access without opening settings. See [Usage](usage.md) for details.
+2. **Settings tab** — The sections below provide the same functionality within the settings UI.
+
 The **Vision model** dropdown is populated dynamically from models installed in Ollama. When you open settings, the plugin queries Ollama for installed models.
 
 The **Recommended models** section shows vision models known to work well for transcription that are not yet installed:
@@ -41,13 +46,14 @@ Once installed, the model is automatically selected and appears in the dropdown.
 
 ### Default transcription prompt
 
-The default prompt instructs the model to:
+The default prompt tells the model it is an expert document transcriber and asks it to convert the image to Obsidian-flavored Markdown. Specifically, it instructs the model to:
 
 - Preserve all text content exactly as shown
-- Use appropriate Markdown formatting (headings, lists, tables, code blocks)
-- Maintain original document structure and hierarchy
-- Describe diagrams or charts in detail
-- Mark unclear text with `[unclear]`
-- Output only the Markdown content with no commentary
+- Use appropriate Markdown formatting (headings, lists, tables, code blocks, links, etc.)
+- Maintain the original document structure and hierarchy
+- Transcribe handwritten text as accurately as possible
+- Convert diagrams or charts to Mermaid syntax, describing them in detail if necessary
+- Use `[unclear]` as a placeholder for illegible text
+- Output **only** the transcribed Markdown — no comments, explanations, preamble, code fences, or framing text
 
 You can customize this prompt to suit your specific use case (e.g. focus on handwriting, technical diagrams, or specific languages).
