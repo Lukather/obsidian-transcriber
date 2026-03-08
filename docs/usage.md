@@ -4,12 +4,12 @@
 
 All commands are available via the command palette (Ctrl/Cmd+P).
 
-| Command                  | Description                                                                                        |
-| ------------------------ | -------------------------------------------------------------------------------------------------- |
-| Transcribe current image | Transcribes the currently active image file. Only appears when an image is open.                   |
-| Install AI model         | Opens a picker to download a model from Ollama. Lists recommended models and accepts custom names. |
-| Select AI model          | Opens a picker to choose which installed model to use for transcription.                           |
-| Remove AI model          | Opens a picker to delete an installed model from Ollama.                                           |
+| Command                  | Description                                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Transcribe current image | Transcribes the currently active image file. Only appears in the palette when an image file is open.                 |
+| Install AI model         | Opens a picker listing recommended models. You can also type any Ollama model name to install it (e.g. `llava:13b`). |
+| Select AI model          | Opens a picker to choose which installed model to use for transcription. The current model is marked.                |
+| Remove AI model          | Opens a picker to delete an installed model from Ollama and free disk space.                                         |
 
 ## Context Menu
 
@@ -25,11 +25,11 @@ You can manage AI models entirely from the command palette — no terminal neede
 ### Installing a model
 
 1. Open the command palette and run **Install AI model**
-2. Select a recommended model from the list, or type any Ollama model name (e.g. `llava:13b`)
+2. Select a recommended model from the list, or type any Ollama model name (e.g. `llava:13b`, `qwen3.5:9b-q4_K_M`)
 3. A progress notice shows download status with percentage
 4. Once installed, the model is automatically selected for transcription
 
-You can also install models from **Settings > Transcriber** using the recommended models list or the custom model field.
+You can also install models from **Settings > Transcriber** using the recommended models list or the custom model field. See [Tips](tips.md) for help choosing a model.
 
 ### Selecting a model
 

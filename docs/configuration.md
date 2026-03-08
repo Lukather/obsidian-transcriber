@@ -19,7 +19,7 @@ Models can be managed in two ways:
 1. **Command palette** — Use the **Install AI model**, **Select AI model**, and **Remove AI model** commands for quick access without opening settings. See [Usage](usage.md) for details.
 2. **Settings tab** — The sections below provide the same functionality within the settings UI.
 
-The **Vision model** dropdown is populated dynamically from models installed in Ollama. When you open settings, the plugin queries Ollama for installed models.
+The **Vision model** dropdown is populated dynamically from models installed in Ollama. When you open settings, the plugin queries Ollama for installed models. If the currently selected model is no longer installed, it appears in the dropdown with a "(not found)" warning.
 
 The **Recommended models** section shows vision models known to work well for transcription that are not yet installed:
 

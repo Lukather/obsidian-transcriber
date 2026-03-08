@@ -43,7 +43,7 @@ See the [user guide](docs/README.md) for detailed usage, configuration, and trou
 
 Created by [Sébastien Dubois](https://dsebastien.net).
 
-<a href="https://www.buymeacoffee.com/dsebastien"><img src="https://github.com/dsebastien/obsidian-plugin-template/blob/main/src/assets/buy-me-a-coffee.png?raw=true" alt="Buy me a coffee" width="175"></a>
+<a href="https://www.buymeacoffee.com/dsebastien"><img src="src/assets/buy-me-a-coffee.png" alt="Buy me a coffee" width="175"></a>
 
 ## License
 

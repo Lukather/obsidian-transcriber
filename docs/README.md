@@ -1,28 +1,36 @@
 # Transcriber — User Guide
 
-Transcriber converts images in your Obsidian vault to Markdown using Ollama vision models running locally on your machine.
+Transcriber converts images in your Obsidian vault to Markdown using Ollama vision models running locally on your machine. No data leaves your computer.
 
-## Key Features
+## Key features
 
 - Transcribe individual images or entire folders in batch
 - Output `.md` files are created alongside source images
-- Install, select, and remove AI models directly from the command palette
+- Install, select, and remove AI models directly from the command palette — no terminal needed
 - Configurable vision model and transcription prompt
 - Progress notifications for batch operations
 - No cloud dependency — everything runs locally via Ollama
 
-## Quick Start
+## Prerequisites
 
-1. Install and enable the plugin
+- **Desktop Obsidian** — this plugin is desktop-only (it requires a local Ollama server)
+- **[Ollama](https://ollama.com/)** — installed and running on your machine
+
+## Quick start
+
+1. Install the plugin from **Settings > Community plugins** and enable it
 2. Ensure [Ollama](https://ollama.com/) is running
 3. Open **Settings > Transcriber** and click **Test** to verify the connection
-4. Install a model: open the command palette and run **Install AI model**, or install from settings
+4. Install a model: open the command palette (Ctrl/Cmd+P) and run **Install AI model**, or install from settings
 5. Right-click an image in the file explorer and select **Transcribe image**
+
+## Further reading
+
+- [Usage](usage.md) — commands, context menu actions, and workflows
+- [Configuration](configuration.md) — all settings explained
+- [Tips](tips.md) — model recommendations, performance, and troubleshooting
+- [Release notes](release-notes.md) — version history
 
 ## About
 
 Created by [Sébastien Dubois](https://dsebastien.net).
-
-For detailed usage instructions, see [Usage](usage.md).
-For all settings, see [Configuration](configuration.md).
-For tips and troubleshooting, see [Tips](tips.md).
