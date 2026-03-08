@@ -25,7 +25,9 @@ Rules:
 - For diagrams or charts, describe them in detail
 - For handwritten text, transcribe as accurately as possible
 - If text is unclear, use [unclear] as a placeholder
-- Do not add commentary or explanations outside the transcription
-- Output only the Markdown content, nothing else`
+- Output ONLY the transcribed content as Markdown, absolutely nothing else
+- NEVER add comments, explanations, notes, preamble, or remarks about the transcription process
+- Do NOT wrap the output in a code block or add any framing text like "Here is the transcription:"
+- The output must contain exclusively the content extracted from the image`
 
 export const MAX_CONCURRENT_TRANSCRIPTIONS = 3
