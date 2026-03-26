@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.2.0 (2026-03-26)
+
+### Features
+
+- **all:** updated default recommended model
+
 ## 1.1.0 (2026-03-08)
 
 ### Features
