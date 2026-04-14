@@ -3,6 +3,7 @@ import type { App } from 'obsidian'
 import { IMAGE_EXTENSIONS, MAX_CONCURRENT_TRANSCRIPTIONS } from '../domain/constants'
 import type { TranscriptionResult } from '../domain/transcription-result'
 import type { PluginSettings } from '../types/plugin-settings.intf'
+import type { TranscriptionCacheEntry } from '../types/plugin-settings.intf'
 import type { AiProviderService } from './ai-provider-service'
 import { processWithConcurrency } from '../../utils/concurrency'
 import { log } from '../../utils/log'
@@ -11,18 +12,21 @@ export class TranscriptionService {
     private readonly app: App
     private readonly getProvider: () => AiProviderService
     private readonly getSettings: () => PluginSettings
-    private readonly persistSettings: () => Promise<void>
+    private readonly updateCacheEntry: (
+        sourcePath: string,
+        entry: TranscriptionCacheEntry
+    ) => Promise<void>
 
     constructor(
         app: App,
         getProvider: () => AiProviderService,
         getSettings: () => PluginSettings,
-        persistSettings: () => Promise<void>
+        updateCacheEntry: (sourcePath: string, entry: TranscriptionCacheEntry) => Promise<void>
     ) {
         this.app = app
         this.getProvider = getProvider
         this.getSettings = getSettings
-        this.persistSettings = persistSettings
+        this.updateCacheEntry = updateCacheEntry
     }
 
     isImageFile(file: TFile): boolean {
@@ -95,8 +99,7 @@ export class TranscriptionService {
                 await this.app.vault.create(outputPath, markdown)
             }
 
-            settings.transcriptionCache[cacheKey] = fingerprint
-            await this.persistSettings()
+            await this.updateCacheEntry(cacheKey, fingerprint)
 
             const durationMs = Date.now() - startTime
             log(`Transcribed ${file.path} in ${durationMs}ms`, 'debug')

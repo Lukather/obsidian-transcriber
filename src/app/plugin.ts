@@ -11,6 +11,7 @@ import { log } from '../utils/log'
 import { produce } from 'immer'
 import type { Draft } from 'immer'
 import type { AiProviderService } from './services/ai-provider-service'
+import type { TranscriptionCacheEntry } from './types/plugin-settings.intf'
 
 export class TranscriberPlugin extends Plugin {
     settings: PluginSettings = { ...DEFAULT_SETTINGS }
@@ -36,7 +37,12 @@ export class TranscriberPlugin extends Plugin {
             this.app,
             () => this.getActiveProvider(),
             () => this.settings,
-            () => this.saveSettings()
+            async (sourcePath: string, entry: TranscriptionCacheEntry) => {
+                this.settings = produce(this.settings, (draft: Draft<PluginSettings>) => {
+                    draft.transcriptionCache[sourcePath] = entry
+                })
+                await this.saveSettings()
+            }
         )
 
         registerCommands(this)

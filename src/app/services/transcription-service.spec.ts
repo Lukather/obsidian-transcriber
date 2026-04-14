@@ -31,7 +31,7 @@ describe('TranscriptionService', () => {
     let settings: PluginSettings
     let mockGetAbstractFileByPath: ReturnType<typeof mock>
     let mockModify: ReturnType<typeof mock>
-    let mockPersistSettings: ReturnType<typeof mock<() => Promise<void>>>
+    let mockUpdateCacheEntry: ReturnType<typeof mock<(p: string, e: unknown) => Promise<void>>>
 
     beforeEach(() => {
         settings = { ...DEFAULT_SETTINGS, transcriptionCache: {} }
@@ -39,7 +39,7 @@ describe('TranscriptionService', () => {
         mockGetAbstractFileByPath = mock(() => null)
         mockModify = mock(() => Promise.resolve())
         mockProviderTranscribe = mock(() => Promise.resolve('# Transcribed'))
-        mockPersistSettings = mock(async () => undefined)
+        mockUpdateCacheEntry = mock(async () => undefined)
 
         mockApp = {
             vault: {
@@ -60,7 +60,7 @@ describe('TranscriptionService', () => {
             mockApp,
             () => mockProvider,
             () => settings,
-            mockPersistSettings
+            mockUpdateCacheEntry
         )
     })
 
@@ -171,7 +171,7 @@ describe('TranscriptionService', () => {
             await service.transcribeFile(file)
 
             expect(mockProviderTranscribe).toHaveBeenCalled()
-            expect(mockPersistSettings).toHaveBeenCalled()
+            expect(mockUpdateCacheEntry).toHaveBeenCalled()
         })
 
         test('returns error on failure', async () => {
