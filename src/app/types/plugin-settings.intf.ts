@@ -11,6 +11,12 @@ import {
 
 export type AiProvider = 'ollama' | 'infomaniak'
 
+export interface TranscriptionCacheEntry {
+    mtime: number
+    size: number
+    configSignature: string
+}
+
 export interface PluginSettings {
     provider: AiProvider
     ollamaUrl: string
@@ -23,6 +29,7 @@ export interface PluginSettings {
     maxTokens: number
     includeSubfolders: boolean
     overwriteExisting: boolean
+    transcriptionCache: Record<string, TranscriptionCacheEntry>
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -36,5 +43,6 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     topP: DEFAULT_TOP_P,
     maxTokens: DEFAULT_MAX_TOKENS,
     includeSubfolders: false,
-    overwriteExisting: false
+    overwriteExisting: false,
+    transcriptionCache: {}
 }

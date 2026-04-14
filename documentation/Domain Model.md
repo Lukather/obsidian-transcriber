@@ -13,6 +13,13 @@
 - `maxTokens: number` — Maximum completion tokens
 - `includeSubfolders: boolean` — Process subfolders in batch operations (default: false)
 - `overwriteExisting: boolean` — Overwrite existing `.md` files (default: false)
+- `transcriptionCache: Record<string, TranscriptionCacheEntry>` — Per-image cache used to skip unchanged images on repeat runs
+
+## TranscriptionCacheEntry
+
+- `mtime: number` — Source image modified time from Obsidian file stat
+- `size: number` — Source image file size
+- `configSignature: string` — Serialized provider/model/prompt/parameter signature used for change detection
 
 ## TranscriptionResult
 

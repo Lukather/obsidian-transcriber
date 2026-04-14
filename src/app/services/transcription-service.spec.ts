@@ -12,6 +12,7 @@ function createMockFile(path: string, extension: string): TFile {
     file['name'] = path.split('/').pop() ?? path
     file['extension'] = extension
     file['basename'] = path.split('/').pop()?.replace(`.${extension}`, '') ?? ''
+    file['stat'] = { ctime: 12000, mtime: 12345, size: 9876 }
     return file
 }
 
@@ -30,13 +31,15 @@ describe('TranscriptionService', () => {
     let settings: PluginSettings
     let mockGetAbstractFileByPath: ReturnType<typeof mock>
     let mockModify: ReturnType<typeof mock>
+    let mockPersistSettings: ReturnType<typeof mock<() => Promise<void>>>
 
     beforeEach(() => {
-        settings = { ...DEFAULT_SETTINGS }
+        settings = { ...DEFAULT_SETTINGS, transcriptionCache: {} }
 
         mockGetAbstractFileByPath = mock(() => null)
         mockModify = mock(() => Promise.resolve())
         mockProviderTranscribe = mock(() => Promise.resolve('# Transcribed'))
+        mockPersistSettings = mock(async () => undefined)
 
         mockApp = {
             vault: {
@@ -56,7 +59,8 @@ describe('TranscriptionService', () => {
         service = new TranscriptionService(
             mockApp,
             () => mockProvider,
-            () => settings
+            () => settings,
+            mockPersistSettings
         )
     })
 
@@ -100,6 +104,7 @@ describe('TranscriptionService', () => {
             expect(result.sourceFile).toBe('photos/test.png')
             expect(result.outputFile).toBe('photos/test.md')
             expect(result.durationMs).toBeDefined()
+            expect(result.skipped).toBeUndefined()
         })
 
         test('skips existing files when overwrite is disabled', async () => {
@@ -119,11 +124,54 @@ describe('TranscriptionService', () => {
             // The only getAbstractFileByPath call happens after transcription to decide create vs modify.
             mockGetAbstractFileByPath.mockReturnValue(existingFile)
             settings.overwriteExisting = true
+            settings.transcriptionCache = {}
 
             const file = createMockFile('photos/test.png', 'png')
             await service.transcribeFile(file)
 
             expect(mockModify).toHaveBeenCalled()
+        })
+
+        test('skips unchanged files when overwrite is enabled and fingerprint matches', async () => {
+            const existingOutput = createMockFile('photos/test.md', 'md')
+            settings.overwriteExisting = true
+            settings.transcriptionCache['photos/test.png'] = {
+                mtime: 12345,
+                size: 9876,
+                configSignature: JSON.stringify({
+                    provider: settings.provider,
+                    modelName: settings.modelName,
+                    transcriptionPrompt: settings.transcriptionPrompt,
+                    temperature: settings.temperature,
+                    topP: settings.topP,
+                    maxTokens: settings.maxTokens
+                })
+            }
+            mockGetAbstractFileByPath.mockReturnValue(existingOutput)
+
+            const file = createMockFile('photos/test.png', 'png')
+            const result = await service.transcribeFile(file)
+
+            expect(result.success).toBe(true)
+            expect(result.skipped).toBe(true)
+            expect(mockProviderTranscribe).not.toHaveBeenCalled()
+        })
+
+        test('retranscribes changed files when overwrite is enabled', async () => {
+            const existingOutput = createMockFile('photos/test.md', 'md')
+            settings.overwriteExisting = true
+            settings.transcriptionCache['photos/test.png'] = {
+                mtime: 11111,
+                size: 22222,
+                configSignature: 'old-signature'
+            }
+            mockGetAbstractFileByPath.mockReturnValue(existingOutput)
+
+            const file = createMockFile('photos/test.png', 'png')
+            await service.transcribeFile(file)
+
+            expect(mockProviderTranscribe).toHaveBeenCalled()
+            expect(mockPersistSettings).toHaveBeenCalled()
         })
 
         test('returns error on failure', async () => {

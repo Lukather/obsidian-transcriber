@@ -11,11 +11,18 @@ export class TranscriptionService {
     private readonly app: App
     private readonly getProvider: () => AiProviderService
     private readonly getSettings: () => PluginSettings
+    private readonly persistSettings: () => Promise<void>
 
-    constructor(app: App, getProvider: () => AiProviderService, getSettings: () => PluginSettings) {
+    constructor(
+        app: App,
+        getProvider: () => AiProviderService,
+        getSettings: () => PluginSettings,
+        persistSettings: () => Promise<void>
+    ) {
         this.app = app
         this.getProvider = getProvider
         this.getSettings = getSettings
+        this.persistSettings = persistSettings
     }
 
     isImageFile(file: TFile): boolean {
@@ -34,6 +41,12 @@ export class TranscriptionService {
 
         try {
             const settings = this.getSettings()
+            const cacheKey = file.path
+            const fingerprint = {
+                mtime: file.stat.mtime,
+                size: file.stat.size,
+                configSignature: this.createConfigSignature(settings)
+            }
 
             if (!settings.overwriteExisting) {
                 const existingFile = this.app.vault.getAbstractFileByPath(outputPath)
@@ -44,6 +57,26 @@ export class TranscriptionService {
                         success: true,
                         durationMs: Date.now() - startTime
                     }
+                }
+            }
+
+            const existingOutput = this.app.vault.getAbstractFileByPath(outputPath)
+            const cached = settings.transcriptionCache[cacheKey]
+            if (
+                settings.overwriteExisting &&
+                existingOutput instanceof TFile &&
+                cached &&
+                cached.mtime === fingerprint.mtime &&
+                cached.size === fingerprint.size &&
+                cached.configSignature === fingerprint.configSignature
+            ) {
+                log(`Skipping unchanged image: ${file.path}`, 'debug')
+                return {
+                    sourceFile: file.path,
+                    outputFile: outputPath,
+                    success: true,
+                    skipped: true,
+                    durationMs: Date.now() - startTime
                 }
             }
 
@@ -61,6 +94,9 @@ export class TranscriptionService {
             } else {
                 await this.app.vault.create(outputPath, markdown)
             }
+
+            settings.transcriptionCache[cacheKey] = fingerprint
+            await this.persistSettings()
 
             const durationMs = Date.now() - startTime
             log(`Transcribed ${file.path} in ${durationMs}ms`, 'debug')
@@ -120,5 +156,16 @@ export class TranscriptionService {
                 return this.transcribeFile(file)
             }
         )
+    }
+
+    private createConfigSignature(settings: PluginSettings): string {
+        return JSON.stringify({
+            provider: settings.provider,
+            modelName: settings.modelName,
+            transcriptionPrompt: settings.transcriptionPrompt,
+            temperature: settings.temperature,
+            topP: settings.topP,
+            maxTokens: settings.maxTokens
+        })
     }
 }

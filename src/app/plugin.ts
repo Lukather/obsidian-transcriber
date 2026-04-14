@@ -35,7 +35,8 @@ export class TranscriberPlugin extends Plugin {
         this.transcriptionService = new TranscriptionService(
             this.app,
             () => this.getActiveProvider(),
-            () => this.settings
+            () => this.settings,
+            () => this.saveSettings()
         )
 
         registerCommands(this)
@@ -75,6 +76,8 @@ export class TranscriberPlugin extends Plugin {
                 draft.includeSubfolders = loaded.includeSubfolders
             if (loaded.overwriteExisting !== undefined)
                 draft.overwriteExisting = loaded.overwriteExisting
+            if (loaded.transcriptionCache !== undefined)
+                draft.transcriptionCache = loaded.transcriptionCache
         })
 
         log('Settings loaded', 'debug', this.settings)

@@ -25,6 +25,10 @@ Transcription output is a `.md` file with the same name and location as the sour
 
 When `overwriteExisting` is false (default), images that already have a corresponding `.md` file are silently skipped. When true, existing `.md` files are updated via `vault.modify()`.
 
+## Unchanged Image Skip
+
+When `overwriteExisting` is true, unchanged images are skipped if their file fingerprint (`mtime` + `size`) and transcription config signature match the last successful transcription. This optimization applies to repeated runs and preserves output naming/location rules.
+
 ## Concurrency
 
 Batch folder transcription processes at most 3 images concurrently (`MAX_CONCURRENT_TRANSCRIPTIONS`). Individual failures do not abort the batch; each result is tracked independently.

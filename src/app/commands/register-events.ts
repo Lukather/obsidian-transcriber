@@ -128,13 +128,21 @@ async function transcribeFolderWithProgress(
     progress.hide()
 
     const succeeded = results.filter((r) => r.success).length
+    const skipped = results.filter((r) => r.skipped).length
+    const transcribed = succeeded - skipped
     const failed = results.filter((r) => !r.success).length
 
     if (results.length === 0) {
         new Notice(`No images found in ${folder.name}`)
+    } else if (failed === 0 && skipped === 0) {
+        new Notice(`Transcribed ${transcribed} image${transcribed !== 1 ? 's' : ''} successfully`)
     } else if (failed === 0) {
-        new Notice(`Transcribed ${succeeded} image${succeeded !== 1 ? 's' : ''} successfully`)
+        new Notice(
+            `Transcribed ${transcribed}, skipped ${skipped} unchanged image${skipped !== 1 ? 's' : ''}`
+        )
     } else {
-        new Notice(`Transcribed ${succeeded} image${succeeded !== 1 ? 's' : ''}, ${failed} failed`)
+        new Notice(
+            `Transcribed ${transcribed}, skipped ${skipped}, ${failed} failed image${failed !== 1 ? 's' : ''}`
+        )
     }
 }

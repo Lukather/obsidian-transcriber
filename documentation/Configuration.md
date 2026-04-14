@@ -43,6 +43,8 @@ Models can be installed directly from settings. Installed models are auto-detect
 | Include subfolders   | `false`           | Process images in subfolders during folder transcription |
 | Overwrite existing   | `false`           | Re-transcribe images that already have a `.md` file      |
 
+When **Overwrite existing** is enabled, the plugin still skips unchanged images (same file fingerprint and same transcription config) to speed up repeated batch runs.
+
 ## Constants
 
 | Constant                      | Value                                     | Description                          |
