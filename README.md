@@ -34,12 +34,14 @@ Any other Ollama vision model can be installed directly from the settings or via
 
 ## Getting started
 
-1. Install the plugin from **Settings > Community plugins**
-2. Enable it
-3. Open **Settings > Transcriber** and choose your provider
-4. Configure provider settings and click **Test**
-5. Select a model (for Ollama, you can also install/remove models from commands/settings)
-6. Right-click any image in your vault and select **Transcribe image**
+This plugin is not yet approved by Obsidian so if you want to test it you need to create
+a folde in the .obsidian/plugins called obsidian-transcriber and move the file downloaded
+from the release in there then open Obsidian and follow the steps:
+
+1. Open **Settings > Transcriber** and choose your provider
+2. Configure provider settings and click **Test**
+3. Select a model (for Ollama, you can also install/remove models from commands/settings)
+4. Right-click any image in your vault and select **Transcribe image**
 
 ## Documentation
 
