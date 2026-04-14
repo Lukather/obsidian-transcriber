@@ -33,3 +33,28 @@ export const ollamaDeleteResponseSchema = z.object({
     status: z.string().optional(),
     error: z.string().optional()
 })
+
+export const openAiModelsResponseSchema = z.object({
+    data: z.array(
+        z.object({
+            id: z.string(),
+            object: z.string()
+        })
+    )
+})
+
+export const openAiChatCompletionsResponseSchema = z.object({
+    id: z.string(),
+    object: z.string(),
+    model: z.string(),
+    choices: z.array(
+        z.object({
+            index: z.number(),
+            message: z.object({
+                role: z.string(),
+                content: z.string().nullable()
+            }),
+            finish_reason: z.string().nullable()
+        })
+    )
+})

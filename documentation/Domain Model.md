@@ -2,9 +2,15 @@
 
 ## PluginSettings
 
+- `provider: 'ollama' | 'infomaniak'` — Active transcription provider (default: `ollama`)
 - `ollamaUrl: string` — Ollama server URL (default: `http://localhost:11434`)
-- `modelName: string` — Vision model name (default: `qwen3.5:9b`)
+- `infomaniakBaseUrl: string` — OpenAI-compatible Infomaniak endpoint
+- `infomaniakApiKey: string` — Bearer API key
+- `modelName: string` — Vision model name for the active provider (default: `glm-ocr:latest`)
 - `transcriptionPrompt: string` — Prompt sent with each image
+- `temperature: number` — Completion temperature for Infomaniak/OpenAI-style requests
+- `topP: number` — Nucleus sampling parameter
+- `maxTokens: number` — Maximum completion tokens
 - `includeSubfolders: boolean` — Process subfolders in batch operations (default: false)
 - `overwriteExisting: boolean` — Overwrite existing `.md` files (default: false)
 
@@ -30,3 +36,8 @@
 - `ok: boolean` — Whether connection succeeded
 - `error?: string` — Error message if failed
 - `models?: string[]` — Available model names if succeeded
+
+## OpenAI-Compatible API Types
+
+- `OpenAiModelsResponse` — Available model list from `/models`
+- `OpenAiChatCompletionsResponse` — Transcription response from `/chat/completions`

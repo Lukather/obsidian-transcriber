@@ -2,7 +2,7 @@
 
 ## Overview
 
-Obsidian Transcriber is a desktop-only plugin that transcribes images to Markdown using Ollama vision models. It follows a layered architecture with clear separation of concerns.
+Obsidian Transcriber is a desktop-focused plugin that transcribes images to Markdown using either Ollama or an OpenAI-compatible provider (Infomaniak). It follows a layered architecture with clear separation of concerns.
 
 ## Layers
 
@@ -17,7 +17,9 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 ### Services (`src/app/services/`)
 
 - **OllamaService** — HTTP client for Ollama's REST API (`/api/tags`, `/api/chat`, `/api/pull`, `/api/delete`). Uses Obsidian's `requestUrl`. Accepts an optional `RequestFn` for testability.
-- **TranscriptionService** — Orchestrates transcription. Reads images from the vault, calls OllamaService, writes Markdown output. Handles batch operations with concurrency limiting.
+- **InfomaniakService** — HTTP client for OpenAI-compatible endpoints (`/models`, `/chat/completions`) with bearer auth and tunable model parameters.
+- **AiProviderService** — Shared provider interface used by orchestration.
+- **TranscriptionService** — Orchestrates transcription. Reads images from the vault, calls the active provider service, writes Markdown output. Handles batch operations with concurrency limiting.
 
 ### Commands (`src/app/commands/`)
 
@@ -32,13 +34,14 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 ### Settings (`src/app/settings/`)
 
-- **settings-tab.ts** — `TranscriberSettingTab` with Ollama config, transcription settings, and support sections
+- **settings-tab.ts** — `TranscriberSettingTab` with provider selector (Ollama/Infomaniak), provider-specific config, transcription settings, and support sections
 - **settings-constants.ts** — UI label constants
 
 ### Domain (`src/app/domain/`)
 
 - **constants.ts** — Image extensions, known models, defaults, concurrency limit
 - **ollama-types.ts** — TypeScript interfaces for Ollama API
+- **openai-types.ts** — TypeScript interfaces for OpenAI-compatible provider responses
 - **schemas.ts** — Zod schemas for response validation
 - **transcription-result.ts** — `TranscriptionResult` interface
 
@@ -62,7 +65,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 1. User triggers transcription (command palette, file explorer context menu, or editor context menu)
 2. TranscriptionService reads image binary from vault
-3. OllamaService encodes image to base64 and POSTs to Ollama `/api/chat`
-4. Ollama returns Markdown text
+3. Active provider service encodes image to base64 and sends it to either Ollama (`/api/chat`) or Infomaniak (`/chat/completions`)
+4. Provider returns Markdown text
 5. TranscriptionService writes `.md` file alongside the source image
 6. Notice shown to user with result

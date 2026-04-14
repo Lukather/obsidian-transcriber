@@ -11,8 +11,13 @@ export const RECOMMENDED_MODELS = [
 ] as const
 
 export const DEFAULT_OLLAMA_URL = 'http://localhost:11434'
+export const DEFAULT_INFOMANIAK_URL = 'https://api.infomaniak.com/2/ai/104211/openai/v1'
 
 export const DEFAULT_MODEL = 'glm-ocr:latest'
+export const DEFAULT_PROVIDER = 'ollama'
+export const DEFAULT_TEMPERATURE = 0.2
+export const DEFAULT_TOP_P = 1
+export const DEFAULT_MAX_TOKENS = 4096
 
 export const DEFAULT_TRANSCRIPTION_PROMPT = `You are an expert document transcriber. Convert this image to well-structured Obsidian-flavored Markdown.
 

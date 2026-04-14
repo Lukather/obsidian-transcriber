@@ -22,25 +22,63 @@ export class TranscriberSettingTab extends PluginSettingTab {
         const { containerEl } = this
         containerEl.empty()
 
-        this.renderOllamaSection(containerEl)
+        this.renderProviderSection(containerEl)
+        this.renderProviderConfigSection(containerEl)
         this.renderTranscriptionSection(containerEl)
         this.renderSupportSection(containerEl)
 
-        // Load installed models asynchronously, then re-render the Ollama section
+        // Load installed models asynchronously, then re-render the provider section
         void this.loadInstalledModels(containerEl)
     }
 
     private async loadInstalledModels(containerEl: HTMLElement): Promise<void> {
         try {
-            this.installedModels = await this.plugin.ollamaService.listModels()
+            this.installedModels = await this.plugin.getActiveProvider().listModels()
         } catch {
             this.installedModels = []
         }
-        // Re-render only the Ollama section with fresh model data
+        // Re-render settings with fresh model data
         containerEl.empty()
-        this.renderOllamaSection(containerEl)
+        this.renderProviderSection(containerEl)
+        this.renderProviderConfigSection(containerEl)
         this.renderTranscriptionSection(containerEl)
         this.renderSupportSection(containerEl)
+    }
+
+    private renderProviderSection(containerEl: HTMLElement): void {
+        new Setting(containerEl).setName(SETTINGS_LABELS.providerHeading).setHeading()
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.provider)
+            .setDesc(SETTINGS_LABELS.providerDesc)
+            .addDropdown((dropdown) => {
+                dropdown
+                    .addOption('ollama', SETTINGS_LABELS.ollamaOption)
+                    .addOption('infomaniak', SETTINGS_LABELS.infomaniakOption)
+                    .setValue(this.plugin.settings.provider)
+                    .onChange(async (value) => {
+                        if (value !== 'ollama' && value !== 'infomaniak') {
+                            return
+                        }
+                        this.plugin.settings = produce(
+                            this.plugin.settings,
+                            (draft: Draft<PluginSettings>) => {
+                                draft.provider = value
+                            }
+                        )
+                        await this.plugin.saveSettings()
+                        this.display()
+                    })
+            })
+    }
+
+    private renderProviderConfigSection(containerEl: HTMLElement): void {
+        if (this.plugin.settings.provider === 'infomaniak') {
+            this.renderInfomaniakSection(containerEl)
+            return
+        }
+
+        this.renderOllamaSection(containerEl)
     }
 
     private renderOllamaSection(containerEl: HTMLElement): void {
@@ -108,10 +146,136 @@ export class TranscriberSettingTab extends PluginSettingTab {
         this.renderCustomModelInstall(containerEl)
     }
 
+    private renderInfomaniakSection(containerEl: HTMLElement): void {
+        new Setting(containerEl).setName(SETTINGS_LABELS.infomaniakHeading).setHeading()
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.infomaniakBaseUrl)
+            .setDesc(SETTINGS_LABELS.infomaniakBaseUrlDesc)
+            .addText((text) => {
+                text.setValue(this.plugin.settings.infomaniakBaseUrl).onChange(async (value) => {
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.infomaniakBaseUrl = value.trim()
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.infomaniakApiKey)
+            .setDesc(SETTINGS_LABELS.infomaniakApiKeyDesc)
+            .addText((text) => {
+                text.setPlaceholder(SETTINGS_LABELS.infomaniakApiKeyPlaceholder)
+                    .setValue(this.plugin.settings.infomaniakApiKey)
+                    .onChange(async (value) => {
+                        this.plugin.settings = produce(
+                            this.plugin.settings,
+                            (draft: Draft<PluginSettings>) => {
+                                draft.infomaniakApiKey = value.trim()
+                            }
+                        )
+                        await this.plugin.saveSettings()
+                    })
+                text.inputEl.type = 'password'
+            })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.testConnection)
+            .setDesc('Verify that the configured Infomaniak endpoint and key are valid')
+            .addButton((button) => {
+                button
+                    .setButtonText(SETTINGS_LABELS.testConnectionButton)
+                    .setCta()
+                    .onClick(async () => {
+                        button.setDisabled(true)
+                        button.setButtonText('Testing...')
+
+                        const result = await this.plugin.infomaniakService.testConnection()
+
+                        if (result.ok) {
+                            const modelCount = result.models?.length ?? 0
+                            new Notice(
+                                `Connected to Infomaniak. ${modelCount} model${modelCount !== 1 ? 's' : ''} available.`
+                            )
+                            this.installedModels = result.models ?? []
+                            this.display()
+                            return
+                        }
+
+                        new Notice(`Connection failed: ${result.error}`)
+                        button.setButtonText(SETTINGS_LABELS.testConnectionButton)
+                        button.setDisabled(false)
+                    })
+            })
+
+        this.renderModelDropdown(containerEl)
+        this.renderInfomaniakParameters(containerEl)
+    }
+
+    private renderInfomaniakParameters(containerEl: HTMLElement): void {
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.temperature)
+            .setDesc(SETTINGS_LABELS.temperatureDesc)
+            .addText((text) => {
+                text.setValue(String(this.plugin.settings.temperature)).onChange(async (value) => {
+                    const parsed = Number.parseFloat(value)
+                    if (Number.isNaN(parsed)) return
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.temperature = Math.min(2, Math.max(0, parsed))
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.topP)
+            .setDesc(SETTINGS_LABELS.topPDesc)
+            .addText((text) => {
+                text.setValue(String(this.plugin.settings.topP)).onChange(async (value) => {
+                    const parsed = Number.parseFloat(value)
+                    if (Number.isNaN(parsed)) return
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.topP = Math.min(1, Math.max(0, parsed))
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.maxTokens)
+            .setDesc(SETTINGS_LABELS.maxTokensDesc)
+            .addText((text) => {
+                text.setValue(String(this.plugin.settings.maxTokens)).onChange(async (value) => {
+                    const parsed = Number.parseInt(value, 10)
+                    if (Number.isNaN(parsed)) return
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.maxTokens = Math.max(1, parsed)
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+    }
+
     private renderModelDropdown(containerEl: HTMLElement): void {
         const setting = new Setting(containerEl)
             .setName(SETTINGS_LABELS.model)
-            .setDesc(SETTINGS_LABELS.modelDesc)
+            .setDesc(
+                this.plugin.settings.provider === 'infomaniak'
+                    ? 'Select an available Infomaniak model for transcription'
+                    : SETTINGS_LABELS.modelDesc
+            )
 
         if (this.installedModels.length === 0) {
             setting.setDesc(SETTINGS_LABELS.noModelsFound)

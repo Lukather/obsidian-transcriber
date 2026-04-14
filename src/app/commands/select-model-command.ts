@@ -50,10 +50,18 @@ export function createSelectModelCommand(plugin: TranscriberPlugin): {
         callback(): void {
             void (async () => {
                 try {
-                    const models = await plugin.ollamaService.listModels()
+                    const models = await plugin.getActiveProvider().listModels()
 
                     if (models.length === 0) {
-                        new Notice('No models installed. Use "Install AI model" to download one.')
+                        if (plugin.settings.provider === 'ollama') {
+                            new Notice(
+                                'No models installed. Use "Install AI model" to download one.'
+                            )
+                        } else {
+                            new Notice(
+                                'No models available from the configured Infomaniak endpoint.'
+                            )
+                        }
                         return
                     }
 

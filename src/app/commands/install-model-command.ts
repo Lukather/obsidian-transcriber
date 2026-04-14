@@ -77,6 +77,11 @@ export function createInstallModelCommand(plugin: TranscriberPlugin): {
         id: 'install-model',
         name: 'Install AI model',
         callback(): void {
+            if (plugin.settings.provider !== 'ollama') {
+                new Notice('Model install is only available when using the Ollama provider.')
+                return
+            }
+
             // Build suggestion list: recommended models first, then any installed ones
             const allModels = [...RECOMMENDED_MODELS]
             new ModelSuggestModal(plugin, allModels, (model) => {

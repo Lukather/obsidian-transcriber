@@ -15,17 +15,12 @@ import type {
     OllamaPullProgress,
     OllamaTagsResponse
 } from '../domain/ollama-types'
+import type { AiProviderService, ConnectionTestResult } from './ai-provider-service'
 
 export type RequestFn = (request: RequestUrlParam | string) => Promise<RequestUrlResponse>
 export type FetchFn = (input: string | URL | Request, init?: RequestInit) => Promise<Response>
 
-export interface ConnectionTestResult {
-    ok: boolean
-    error?: string
-    models?: string[]
-}
-
-export class OllamaService {
+export class OllamaService implements AiProviderService {
     private baseUrl: string
     private modelName: string
     private readonly requestFn: RequestFn

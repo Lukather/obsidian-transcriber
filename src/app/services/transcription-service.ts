@@ -3,18 +3,18 @@ import type { App } from 'obsidian'
 import { IMAGE_EXTENSIONS, MAX_CONCURRENT_TRANSCRIPTIONS } from '../domain/constants'
 import type { TranscriptionResult } from '../domain/transcription-result'
 import type { PluginSettings } from '../types/plugin-settings.intf'
-import type { OllamaService } from './ollama-service'
+import type { AiProviderService } from './ai-provider-service'
 import { processWithConcurrency } from '../../utils/concurrency'
 import { log } from '../../utils/log'
 
 export class TranscriptionService {
     private readonly app: App
-    private readonly ollamaService: OllamaService
+    private readonly getProvider: () => AiProviderService
     private readonly getSettings: () => PluginSettings
 
-    constructor(app: App, ollamaService: OllamaService, getSettings: () => PluginSettings) {
+    constructor(app: App, getProvider: () => AiProviderService, getSettings: () => PluginSettings) {
         this.app = app
-        this.ollamaService = ollamaService
+        this.getProvider = getProvider
         this.getSettings = getSettings
     }
 
@@ -50,7 +50,7 @@ export class TranscriptionService {
             log(`Transcribing: ${file.path}`, 'debug')
 
             const imageData = await this.app.vault.readBinary(file)
-            const markdown = await this.ollamaService.transcribeImage(
+            const markdown = await this.getProvider().transcribeImage(
                 imageData,
                 settings.transcriptionPrompt
             )

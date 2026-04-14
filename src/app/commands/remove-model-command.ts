@@ -45,6 +45,11 @@ export function createRemoveModelCommand(plugin: TranscriberPlugin): {
         id: 'remove-model',
         name: 'Remove AI model',
         callback(): void {
+            if (plugin.settings.provider !== 'ollama') {
+                new Notice('Model removal is only available when using the Ollama provider.')
+                return
+            }
+
             void (async () => {
                 try {
                     const models = await plugin.ollamaService.listModels()

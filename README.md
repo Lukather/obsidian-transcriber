@@ -1,8 +1,10 @@
 # Transcriber for Obsidian
 
-An Obsidian plugin that transcribes images to Markdown using local [Ollama](https://ollama.com/) vision models.
+Fork of the original Obsidian Transcriber plugin by Sébastien Dubois, with ongoing changes by Lorenzo Strambi.
 
-Point it at any image in your vault and get structured Markdown back — headings, lists, tables, code blocks — all extracted by a vision AI running on your own machine. No data leaves your computer.
+An Obsidian plugin that transcribes images to Markdown using either local [Ollama](https://ollama.com/) vision models or an OpenAI-compatible endpoint such as Infomaniak.
+
+Point it at any image in your vault and get structured Markdown back — headings, lists, tables, code blocks. You can run fully local with Ollama, or use a hosted provider when desired.
 
 ## What it does
 
@@ -10,6 +12,8 @@ Point it at any image in your vault and get structured Markdown back — heading
 - **Batch-transcribe an entire folder** of images (with optional subfolder inclusion)
 - **Creates a `.md` file** alongside each image with the transcribed content
 - **Install, select, and remove AI models** directly from the command palette — no terminal needed
+- **Choose your provider**: Ollama or Infomaniak (OpenAI-compatible API)
+- **Tune model parameters** for Infomaniak: temperature, top-p, and max tokens
 - **Progress tracking** for batch operations with per-file status
 - **Configurable prompt** so you can tailor the transcription instructions
 
@@ -23,16 +27,18 @@ Any other Ollama vision model can be installed directly from the settings or via
 
 ## Prerequisites
 
-- [Ollama](https://ollama.com/) installed and running locally
+- Either:
+    - [Ollama](https://ollama.com/) installed and running locally, or
+    - an Infomaniak/OpenAI-compatible API endpoint and API key
 - Desktop Obsidian (this plugin is desktop-only)
 
 ## Getting started
 
 1. Install the plugin from **Settings > Community plugins**
 2. Enable it
-3. Open **Settings > Transcriber** and verify the Ollama server URL (default: `http://localhost:11434`)
-4. Click **Test** to confirm the connection
-5. Install a model: open the command palette (Ctrl/Cmd+P) and run **Install AI model**, or install from settings
+3. Open **Settings > Transcriber** and choose your provider
+4. Configure provider settings and click **Test**
+5. Select a model (for Ollama, you can also install/remove models from commands/settings)
 6. Right-click any image in your vault and select **Transcribe image**
 
 ## Documentation
@@ -41,7 +47,9 @@ See the [user guide](docs/README.md) for detailed usage, configuration, and trou
 
 ## Support
 
-Created by [Sébastien Dubois](https://dsebastien.net).
+This fork is maintained by **Lorenzo Strambi**.
+
+Original plugin created by [Sébastien Dubois](https://dsebastien.net).
 
 <a href="https://www.buymeacoffee.com/dsebastien"><img src="src/assets/buy-me-a-coffee.png" alt="Buy me a coffee" width="175"></a>
 

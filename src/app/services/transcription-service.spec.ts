@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 import { TranscriptionService } from './transcription-service'
-import type { OllamaService } from './ollama-service'
+import type { AiProviderService } from './ai-provider-service'
 import type { PluginSettings } from '../types/plugin-settings.intf'
 import { DEFAULT_SETTINGS } from '../types/plugin-settings.intf'
 import { TFile, TFolder } from 'obsidian'
@@ -26,7 +26,7 @@ function createMockFolder(name: string, children: (TFile | TFolder)[]): TFolder 
 describe('TranscriptionService', () => {
     let service: TranscriptionService
     let mockApp: App
-    let mockOllamaTranscribe: ReturnType<typeof mock>
+    let mockProviderTranscribe: ReturnType<typeof mock>
     let settings: PluginSettings
     let mockGetAbstractFileByPath: ReturnType<typeof mock>
     let mockModify: ReturnType<typeof mock>
@@ -36,7 +36,7 @@ describe('TranscriptionService', () => {
 
         mockGetAbstractFileByPath = mock(() => null)
         mockModify = mock(() => Promise.resolve())
-        mockOllamaTranscribe = mock(() => Promise.resolve('# Transcribed'))
+        mockProviderTranscribe = mock(() => Promise.resolve('# Transcribed'))
 
         mockApp = {
             vault: {
@@ -47,11 +47,17 @@ describe('TranscriptionService', () => {
             }
         } as unknown as App
 
-        const mockOllama: OllamaService = {
-            transcribeImage: mockOllamaTranscribe
-        } as unknown as OllamaService
+        const mockProvider: AiProviderService = {
+            testConnection: async () => ({ ok: true, models: [] }),
+            listModels: async () => [],
+            transcribeImage: mockProviderTranscribe
+        }
 
-        service = new TranscriptionService(mockApp, mockOllama, () => settings)
+        service = new TranscriptionService(
+            mockApp,
+            () => mockProvider,
+            () => settings
+        )
     })
 
     describe('isImageFile', () => {
@@ -104,7 +110,7 @@ describe('TranscriptionService', () => {
             const result = await service.transcribeFile(file)
 
             expect(result.success).toBe(true)
-            expect(mockOllamaTranscribe).not.toHaveBeenCalled()
+            expect(mockProviderTranscribe).not.toHaveBeenCalled()
         })
 
         test('overwrites existing files when enabled', async () => {
@@ -121,7 +127,7 @@ describe('TranscriptionService', () => {
         })
 
         test('returns error on failure', async () => {
-            mockOllamaTranscribe.mockRejectedValueOnce(new Error('Model not found'))
+            mockProviderTranscribe.mockRejectedValueOnce(new Error('Model not found'))
 
             const file = createMockFile('photos/test.png', 'png')
             const result = await service.transcribeFile(file)
