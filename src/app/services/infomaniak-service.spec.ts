@@ -10,7 +10,7 @@ describe('InfomaniakService', () => {
     beforeEach(() => {
         mockRequest = mock<RequestFn>()
         service = new InfomaniakService(
-            'https://api.infomaniak.com/2/ai/104211/openai/v1',
+            'https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1',
             'secret-key',
             'vision-model',
             0.2,
@@ -71,7 +71,7 @@ describe('InfomaniakService', () => {
 
     test('fails fast when API key is missing', async () => {
         service.updateConfig(
-            'https://api.infomaniak.com/2/ai/104211/openai/v1',
+            'https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1',
             '',
             'vision-model',
             0.2,

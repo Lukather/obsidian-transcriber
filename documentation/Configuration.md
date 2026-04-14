@@ -25,15 +25,15 @@ Models can be installed directly from settings. Installed models are auto-detect
 
 ## Infomaniak Configuration (OpenAI-compatible)
 
-| Setting      | Default                                            | Description                                          |
-| ------------ | -------------------------------------------------- | ---------------------------------------------------- |
-| API endpoint | `https://api.infomaniak.com/2/ai/104211/openai/v1` | OpenAI-compatible base URL                           |
-| API key      | ``                                                 | Bearer token used for auth                           |
-| Test         | —                                                  | Verifies endpoint/key and refreshes available models |
-| Model        | `glm-ocr:latest`                                   | Dropdown populated from `/models`                    |
-| Temperature  | `0.2`                                              | Controls randomness (0..2)                           |
-| Top P        | `1`                                                | Nucleus sampling probability (0..1)                  |
-| Max tokens   | `4096`                                             | Maximum completion tokens returned by model          |
+| Setting      | Default                                                     | Description                                          |
+| ------------ | ----------------------------------------------------------- | ---------------------------------------------------- |
+| API endpoint | `https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1` | OpenAI-compatible base URL                           |
+| API key      | ``                                                          | Bearer token used for auth                           |
+| Test         | —                                                           | Verifies endpoint/key and refreshes available models |
+| Model        | `glm-ocr:latest`                                            | Dropdown populated from `/models`                    |
+| Temperature  | `0.2`                                                       | Controls randomness (0..2)                           |
+| Top P        | `1`                                                         | Nucleus sampling probability (0..1)                  |
+| Max tokens   | `4096`                                                      | Maximum completion tokens returned by model          |
 
 ## Transcription Settings
 
