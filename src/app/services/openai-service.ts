@@ -8,7 +8,7 @@ import type { AiProviderService, ConnectionTestResult } from './ai-provider-serv
 
 export type RequestFn = (request: RequestUrlParam | string) => Promise<RequestUrlResponse>
 
-export class InfomaniakService implements AiProviderService {
+export class OpenAiCompatibleService implements AiProviderService {
     private baseUrl: string
     private apiKey: string
     private modelName: string
@@ -71,7 +71,9 @@ export class InfomaniakService implements AiProviderService {
         })
 
         if (response.status !== 200) {
-            throw new Error(`Infomaniak server returned ${response.status}: ${response.text}`)
+            throw new Error(
+                `OpenAI-compatible server returned ${response.status}: ${response.text}`
+            )
         }
 
         const data: unknown = response.json
@@ -116,7 +118,9 @@ export class InfomaniakService implements AiProviderService {
         })
 
         if (response.status !== 200) {
-            throw new Error(`Infomaniak returned ${response.status}: ${response.text}`)
+            throw new Error(
+                `OpenAI-compatible provider returned ${response.status}: ${response.text}`
+            )
         }
 
         const data: unknown = response.json
@@ -125,7 +129,7 @@ export class InfomaniakService implements AiProviderService {
         const firstChoice = parsed.choices[0]
         const content = firstChoice?.message.content?.trim()
         if (!content) {
-            throw new Error('Infomaniak response did not include transcription content')
+            throw new Error('OpenAI-compatible response did not include transcription content')
         }
         return content
     }
@@ -138,7 +142,7 @@ export class InfomaniakService implements AiProviderService {
 
     private ensureAuth(): void {
         if (!this.apiKey.trim()) {
-            throw new Error('Infomaniak API key is required')
+            throw new Error('OpenAI-compatible API key is required')
         }
     }
 }

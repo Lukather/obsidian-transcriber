@@ -2,13 +2,13 @@
 
 ## PluginSettings
 
-- `provider: 'ollama' | 'infomaniak'` — Active transcription provider (default: `ollama`)
+- `provider: 'ollama' | 'openai'` — Active transcription provider (default: `ollama`)
 - `ollamaUrl: string` — Ollama server URL (default: `http://localhost:11434`)
-- `infomaniakBaseUrl: string` — OpenAI-compatible Infomaniak endpoint
-- `infomaniakApiKey: string` — Bearer API key
+- `openAiBaseUrl: string` — OpenAI-compatible endpoint base URL
+- `openAiApiKey: string` — Bearer API key
 - `modelName: string` — Vision model name for the active provider (default: `glm-ocr:latest`)
 - `transcriptionPrompt: string` — Prompt sent with each image
-- `temperature: number` — Completion temperature for Infomaniak/OpenAI-style requests
+- `temperature: number` — Completion temperature for OpenAI-style requests
 - `topP: number` — Nucleus sampling parameter
 - `maxTokens: number` — Maximum completion tokens
 - `includeSubfolders: boolean` — Process subfolders in batch operations (default: false)

@@ -1,6 +1,6 @@
 import {
     DEFAULT_MODEL,
-    DEFAULT_INFOMANIAK_URL,
+    DEFAULT_OPENAI_URL,
     DEFAULT_MAX_TOKENS,
     DEFAULT_PROVIDER,
     DEFAULT_TEMPERATURE,
@@ -9,7 +9,7 @@ import {
     DEFAULT_TRANSCRIPTION_PROMPT
 } from '../domain/constants'
 
-export type AiProvider = 'ollama' | 'infomaniak'
+export type AiProvider = 'ollama' | 'openai'
 
 export interface TranscriptionCacheEntry {
     mtime: number
@@ -20,8 +20,8 @@ export interface TranscriptionCacheEntry {
 export interface PluginSettings {
     provider: AiProvider
     ollamaUrl: string
-    infomaniakBaseUrl: string
-    infomaniakApiKey: string
+    openAiBaseUrl: string
+    openAiApiKey: string
     modelName: string
     transcriptionPrompt: string
     temperature: number
@@ -35,8 +35,8 @@ export interface PluginSettings {
 export const DEFAULT_SETTINGS: PluginSettings = {
     provider: DEFAULT_PROVIDER,
     ollamaUrl: DEFAULT_OLLAMA_URL,
-    infomaniakBaseUrl: DEFAULT_INFOMANIAK_URL,
-    infomaniakApiKey: '',
+    openAiBaseUrl: DEFAULT_OPENAI_URL,
+    openAiApiKey: '',
     modelName: DEFAULT_MODEL,
     transcriptionPrompt: DEFAULT_TRANSCRIPTION_PROMPT,
     temperature: DEFAULT_TEMPERATURE,

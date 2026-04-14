@@ -3,7 +3,7 @@ import { DEFAULT_SETTINGS } from './types/plugin-settings.intf'
 import type { PluginSettings } from './types/plugin-settings.intf'
 import { TranscriberSettingTab } from './settings/settings-tab'
 import { OllamaService } from './services/ollama-service'
-import { InfomaniakService } from './services/infomaniak-service'
+import { OpenAiCompatibleService } from './services/openai-service'
 import { TranscriptionService } from './services/transcription-service'
 import { registerCommands } from './commands/register-commands'
 import { registerEvents } from './commands/register-events'
@@ -15,7 +15,7 @@ import type { AiProviderService } from './services/ai-provider-service'
 export class TranscriberPlugin extends Plugin {
     settings: PluginSettings = { ...DEFAULT_SETTINGS }
     ollamaService!: OllamaService
-    infomaniakService!: InfomaniakService
+    openAiService!: OpenAiCompatibleService
     transcriptionService!: TranscriptionService
 
     override async onload(): Promise<void> {
@@ -23,9 +23,9 @@ export class TranscriberPlugin extends Plugin {
         await this.loadSettings()
 
         this.ollamaService = new OllamaService(this.settings.ollamaUrl, this.settings.modelName)
-        this.infomaniakService = new InfomaniakService(
-            this.settings.infomaniakBaseUrl,
-            this.settings.infomaniakApiKey,
+        this.openAiService = new OpenAiCompatibleService(
+            this.settings.openAiBaseUrl,
+            this.settings.openAiApiKey,
             this.settings.modelName,
             this.settings.temperature,
             this.settings.topP,
@@ -62,10 +62,8 @@ export class TranscriberPlugin extends Plugin {
         this.settings = produce(DEFAULT_SETTINGS, (draft: Draft<PluginSettings>) => {
             if (loaded.ollamaUrl !== undefined) draft.ollamaUrl = loaded.ollamaUrl
             if (loaded.provider !== undefined) draft.provider = loaded.provider
-            if (loaded.infomaniakBaseUrl !== undefined)
-                draft.infomaniakBaseUrl = loaded.infomaniakBaseUrl
-            if (loaded.infomaniakApiKey !== undefined)
-                draft.infomaniakApiKey = loaded.infomaniakApiKey
+            if (loaded.openAiBaseUrl !== undefined) draft.openAiBaseUrl = loaded.openAiBaseUrl
+            if (loaded.openAiApiKey !== undefined) draft.openAiApiKey = loaded.openAiApiKey
             if (loaded.modelName !== undefined) draft.modelName = loaded.modelName
             if (loaded.transcriptionPrompt !== undefined)
                 draft.transcriptionPrompt = loaded.transcriptionPrompt
@@ -87,9 +85,9 @@ export class TranscriberPlugin extends Plugin {
         log('Saving settings', 'debug', this.settings)
         await this.saveData(this.settings)
         this.ollamaService.updateConfig(this.settings.ollamaUrl, this.settings.modelName)
-        this.infomaniakService.updateConfig(
-            this.settings.infomaniakBaseUrl,
-            this.settings.infomaniakApiKey,
+        this.openAiService.updateConfig(
+            this.settings.openAiBaseUrl,
+            this.settings.openAiApiKey,
             this.settings.modelName,
             this.settings.temperature,
             this.settings.topP,
@@ -99,6 +97,6 @@ export class TranscriberPlugin extends Plugin {
     }
 
     getActiveProvider(): AiProviderService {
-        return this.settings.provider === 'infomaniak' ? this.infomaniakService : this.ollamaService
+        return this.settings.provider === 'openai' ? this.openAiService : this.ollamaService
     }
 }

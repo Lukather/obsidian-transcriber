@@ -29,7 +29,7 @@ Any other Ollama vision model can be installed directly from the settings or via
 
 - Either:
     - [Ollama](https://ollama.com/) installed and running locally, or
-    - an Infomaniak/OpenAI-compatible API endpoint and API key
+    - an OpenAI-compatible API endpoint and API key
 - Desktop Obsidian (this plugin is desktop-only)
 
 ## Getting started

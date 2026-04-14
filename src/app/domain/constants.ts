@@ -11,7 +11,7 @@ export const RECOMMENDED_MODELS = [
 ] as const
 
 export const DEFAULT_OLLAMA_URL = 'http://localhost:11434'
-export const DEFAULT_INFOMANIAK_URL = 'https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1'
+export const DEFAULT_OPENAI_URL = 'https://api.openai.com/v1'
 
 export const DEFAULT_MODEL = 'glm-ocr:latest'
 export const DEFAULT_PROVIDER = 'ollama'

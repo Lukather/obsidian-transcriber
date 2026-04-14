@@ -2,7 +2,7 @@
 
 ## Overview
 
-Obsidian Transcriber is a desktop-focused plugin that transcribes images to Markdown using either Ollama or an OpenAI-compatible provider (Infomaniak). It follows a layered architecture with clear separation of concerns.
+Obsidian Transcriber is a desktop-focused plugin that transcribes images to Markdown using either Ollama or an OpenAI-compatible provider. It follows a layered architecture with clear separation of concerns.
 
 ## Layers
 
@@ -17,7 +17,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 ### Services (`src/app/services/`)
 
 - **OllamaService** — HTTP client for Ollama's REST API (`/api/tags`, `/api/chat`, `/api/pull`, `/api/delete`). Uses Obsidian's `requestUrl`. Accepts an optional `RequestFn` for testability.
-- **InfomaniakService** — HTTP client for OpenAI-compatible endpoints (`/models`, `/chat/completions`) with bearer auth and tunable model parameters.
+- **OpenAiCompatibleService** — HTTP client for OpenAI-compatible endpoints (`/models`, `/chat/completions`) with bearer auth and tunable model parameters.
 - **AiProviderService** — Shared provider interface used by orchestration.
 - **TranscriptionService** — Orchestrates transcription. Reads images from the vault, calls the active provider service, writes Markdown output. Handles batch operations with concurrency limiting.
 
@@ -34,7 +34,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 ### Settings (`src/app/settings/`)
 
-- **settings-tab.ts** — `TranscriberSettingTab` with provider selector (Ollama/Infomaniak), provider-specific config, transcription settings, and support sections
+- **settings-tab.ts** — `TranscriberSettingTab` with provider selector (Ollama/OpenAI-compatible), provider-specific config, transcription settings, and support sections
 - **settings-constants.ts** — UI label constants
 
 ### Domain (`src/app/domain/`)
@@ -65,7 +65,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 1. User triggers transcription (command palette, file explorer context menu, or editor context menu)
 2. TranscriptionService reads image binary from vault
-3. Active provider service encodes image to base64 and sends it to either Ollama (`/api/chat`) or Infomaniak (`/chat/completions`)
+3. Active provider service encodes image to base64 and sends it to either Ollama (`/api/chat`) or an OpenAI-compatible API (`/chat/completions`)
 4. Provider returns Markdown text
 5. TranscriptionService writes `.md` file alongside the source image
 6. Notice shown to user with result

@@ -4,10 +4,10 @@ All settings are persisted via Obsidian's `loadData()`/`saveData()`.
 
 ## Provider Selection
 
-| Setting  | Default          | Description                             |
-| -------- | ---------------- | --------------------------------------- |
-| Provider | `ollama`         | Select `ollama` or `infomaniak` backend |
-| Model    | `glm-ocr:latest` | Model used by the active provider       |
+| Setting  | Default          | Description                         |
+| -------- | ---------------- | ----------------------------------- |
+| Provider | `ollama`         | Select `ollama` or `openai` backend |
+| Model    | `glm-ocr:latest` | Model used by the active provider   |
 
 ## Ollama Configuration
 
@@ -23,17 +23,17 @@ Recommended models: `maternion/LightOnOCR-2:1b`, `qwen3.5:2b`, `qwen3.5:4b`, `qw
 
 Models can be installed directly from settings. Installed models are auto-detected via Ollama's `/api/tags` endpoint. Pull progress uses streaming `/api/pull` via native `fetch`.
 
-## Infomaniak Configuration (OpenAI-compatible)
+## OpenAI-Compatible Configuration
 
-| Setting      | Default                                                     | Description                                          |
-| ------------ | ----------------------------------------------------------- | ---------------------------------------------------- |
-| API endpoint | `https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1` | OpenAI-compatible base URL                           |
-| API key      | ``                                                          | Bearer token used for auth                           |
-| Test         | —                                                           | Verifies endpoint/key and refreshes available models |
-| Model        | `glm-ocr:latest`                                            | Dropdown populated from `/models`                    |
-| Temperature  | `0.2`                                                       | Controls randomness (0..2)                           |
-| Top P        | `1`                                                         | Nucleus sampling probability (0..1)                  |
-| Max tokens   | `4096`                                                      | Maximum completion tokens returned by model          |
+| Setting      | Default                     | Description                                          |
+| ------------ | --------------------------- | ---------------------------------------------------- |
+| API endpoint | `https://api.openai.com/v1` | OpenAI-compatible base URL                           |
+| API key      | ``                          | Bearer token used for auth                           |
+| Test         | —                           | Verifies endpoint/key and refreshes available models |
+| Model        | `glm-ocr:latest`            | Dropdown populated from `/models`                    |
+| Temperature  | `0.2`                       | Controls randomness (0..2)                           |
+| Top P        | `1`                         | Nucleus sampling probability (0..1)                  |
+| Max tokens   | `4096`                      | Maximum completion tokens returned by model          |
 
 ## Transcription Settings
 

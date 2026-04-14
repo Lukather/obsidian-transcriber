@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import { InfomaniakService } from './infomaniak-service'
-import type { RequestFn } from './infomaniak-service'
+import { OpenAiCompatibleService } from './openai-service'
+import type { RequestFn } from './openai-service'
 import type { RequestUrlResponse } from 'obsidian'
 
-describe('InfomaniakService', () => {
-    let service: InfomaniakService
+describe('OpenAiCompatibleService', () => {
+    let service: OpenAiCompatibleService
     let mockRequest: ReturnType<typeof mock<RequestFn>>
 
     beforeEach(() => {
         mockRequest = mock<RequestFn>()
-        service = new InfomaniakService(
-            'https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1',
+        service = new OpenAiCompatibleService(
+            'https://api.openai.com/v1',
             'secret-key',
             'vision-model',
             0.2,
@@ -70,14 +70,7 @@ describe('InfomaniakService', () => {
     })
 
     test('fails fast when API key is missing', async () => {
-        service.updateConfig(
-            'https://api.infomaniak.com/2/ai/YOUR_PROJECT_ID/openai/v1',
-            '',
-            'vision-model',
-            0.2,
-            1,
-            4096
-        )
+        service.updateConfig('https://api.openai.com/v1', '', 'vision-model', 0.2, 1, 4096)
 
         try {
             await service.listModels()

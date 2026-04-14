@@ -59,7 +59,7 @@ export function createSelectModelCommand(plugin: TranscriberPlugin): {
                             )
                         } else {
                             new Notice(
-                                'No models available from the configured Infomaniak endpoint.'
+                                'No models available from the configured OpenAI-compatible endpoint.'
                             )
                         }
                         return

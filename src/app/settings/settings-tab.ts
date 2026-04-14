@@ -54,10 +54,10 @@ export class TranscriberSettingTab extends PluginSettingTab {
             .addDropdown((dropdown) => {
                 dropdown
                     .addOption('ollama', SETTINGS_LABELS.ollamaOption)
-                    .addOption('infomaniak', SETTINGS_LABELS.infomaniakOption)
+                    .addOption('openai', SETTINGS_LABELS.openAiOption)
                     .setValue(this.plugin.settings.provider)
                     .onChange(async (value) => {
-                        if (value !== 'ollama' && value !== 'infomaniak') {
+                        if (value !== 'ollama' && value !== 'openai') {
                             return
                         }
                         this.plugin.settings = produce(
@@ -73,8 +73,8 @@ export class TranscriberSettingTab extends PluginSettingTab {
     }
 
     private renderProviderConfigSection(containerEl: HTMLElement): void {
-        if (this.plugin.settings.provider === 'infomaniak') {
-            this.renderInfomaniakSection(containerEl)
+        if (this.plugin.settings.provider === 'openai') {
+            this.renderOpenAiSection(containerEl)
             return
         }
 
@@ -146,18 +146,18 @@ export class TranscriberSettingTab extends PluginSettingTab {
         this.renderCustomModelInstall(containerEl)
     }
 
-    private renderInfomaniakSection(containerEl: HTMLElement): void {
-        new Setting(containerEl).setName(SETTINGS_LABELS.infomaniakHeading).setHeading()
+    private renderOpenAiSection(containerEl: HTMLElement): void {
+        new Setting(containerEl).setName(SETTINGS_LABELS.openAiHeading).setHeading()
 
         new Setting(containerEl)
-            .setName(SETTINGS_LABELS.infomaniakBaseUrl)
-            .setDesc(SETTINGS_LABELS.infomaniakBaseUrlDesc)
+            .setName(SETTINGS_LABELS.openAiBaseUrl)
+            .setDesc(SETTINGS_LABELS.openAiBaseUrlDesc)
             .addText((text) => {
-                text.setValue(this.plugin.settings.infomaniakBaseUrl).onChange(async (value) => {
+                text.setValue(this.plugin.settings.openAiBaseUrl).onChange(async (value) => {
                     this.plugin.settings = produce(
                         this.plugin.settings,
                         (draft: Draft<PluginSettings>) => {
-                            draft.infomaniakBaseUrl = value.trim()
+                            draft.openAiBaseUrl = value.trim()
                         }
                     )
                     await this.plugin.saveSettings()
@@ -165,16 +165,16 @@ export class TranscriberSettingTab extends PluginSettingTab {
             })
 
         new Setting(containerEl)
-            .setName(SETTINGS_LABELS.infomaniakApiKey)
-            .setDesc(SETTINGS_LABELS.infomaniakApiKeyDesc)
+            .setName(SETTINGS_LABELS.openAiApiKey)
+            .setDesc(SETTINGS_LABELS.openAiApiKeyDesc)
             .addText((text) => {
-                text.setPlaceholder(SETTINGS_LABELS.infomaniakApiKeyPlaceholder)
-                    .setValue(this.plugin.settings.infomaniakApiKey)
+                text.setPlaceholder(SETTINGS_LABELS.openAiApiKeyPlaceholder)
+                    .setValue(this.plugin.settings.openAiApiKey)
                     .onChange(async (value) => {
                         this.plugin.settings = produce(
                             this.plugin.settings,
                             (draft: Draft<PluginSettings>) => {
-                                draft.infomaniakApiKey = value.trim()
+                                draft.openAiApiKey = value.trim()
                             }
                         )
                         await this.plugin.saveSettings()
@@ -184,7 +184,7 @@ export class TranscriberSettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName(SETTINGS_LABELS.testConnection)
-            .setDesc('Verify that the configured Infomaniak endpoint and key are valid')
+            .setDesc('Verify that the configured OpenAI-compatible endpoint and key are valid')
             .addButton((button) => {
                 button
                     .setButtonText(SETTINGS_LABELS.testConnectionButton)
@@ -193,12 +193,12 @@ export class TranscriberSettingTab extends PluginSettingTab {
                         button.setDisabled(true)
                         button.setButtonText('Testing...')
 
-                        const result = await this.plugin.infomaniakService.testConnection()
+                        const result = await this.plugin.openAiService.testConnection()
 
                         if (result.ok) {
                             const modelCount = result.models?.length ?? 0
                             new Notice(
-                                `Connected to Infomaniak. ${modelCount} model${modelCount !== 1 ? 's' : ''} available.`
+                                `Connected to OpenAI-compatible provider. ${modelCount} model${modelCount !== 1 ? 's' : ''} available.`
                             )
                             this.installedModels = result.models ?? []
                             this.display()
@@ -212,10 +212,10 @@ export class TranscriberSettingTab extends PluginSettingTab {
             })
 
         this.renderModelDropdown(containerEl)
-        this.renderInfomaniakParameters(containerEl)
+        this.renderOpenAiParameters(containerEl)
     }
 
-    private renderInfomaniakParameters(containerEl: HTMLElement): void {
+    private renderOpenAiParameters(containerEl: HTMLElement): void {
         new Setting(containerEl)
             .setName(SETTINGS_LABELS.temperature)
             .setDesc(SETTINGS_LABELS.temperatureDesc)
@@ -272,8 +272,8 @@ export class TranscriberSettingTab extends PluginSettingTab {
         const setting = new Setting(containerEl)
             .setName(SETTINGS_LABELS.model)
             .setDesc(
-                this.plugin.settings.provider === 'infomaniak'
-                    ? 'Select an available Infomaniak model for transcription'
+                this.plugin.settings.provider === 'openai'
+                    ? 'Select an available OpenAI-compatible model for transcription'
                     : SETTINGS_LABELS.modelDesc
             )
 
