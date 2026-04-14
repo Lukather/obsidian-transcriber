@@ -2,7 +2,7 @@
 
 Fork of the original Obsidian Transcriber plugin by Sébastien Dubois, with ongoing changes by Lorenzo Strambi.
 
-An Obsidian plugin that transcribes images to Markdown using either local [Ollama](https://ollama.com/) vision models or an OpenAI-compatible endpoint such as Infomaniak.
+An Obsidian plugin that transcribes images to Markdown using either local [Ollama](https://ollama.com/) vision models or an OpenAI-compatible endpoint.
 
 Point it at any image in your vault and get structured Markdown back — headings, lists, tables, code blocks. You can run fully local with Ollama, or use a hosted provider when desired.
 
@@ -12,8 +12,8 @@ Point it at any image in your vault and get structured Markdown back — heading
 - **Batch-transcribe an entire folder** of images (with optional subfolder inclusion)
 - **Creates a `.md` file** alongside each image with the transcribed content
 - **Install, select, and remove AI models** directly from the command palette — no terminal needed
-- **Choose your provider**: Ollama or Infomaniak (OpenAI-compatible API)
-- **Tune model parameters** for Infomaniak: temperature, top-p, and max tokens
+- **Choose your provider**: Ollama or OpenAI-compatible API
+- **Tune model parameters** for OpenAI: temperature, top-p, and max tokens
 - **Progress tracking** for batch operations with per-file status
 - **Configurable prompt** so you can tailor the transcription instructions
 
