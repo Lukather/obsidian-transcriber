@@ -111,7 +111,7 @@ describe('OllamaService', () => {
             } as unknown as RequestUrlResponse)
 
             const imageData: ArrayBuffer = new TextEncoder().encode('fake-image').buffer
-            const result = await service.transcribeImage(imageData, 'Transcribe this')
+            const result = await service.transcribeImage(imageData, 'image/png', 'Transcribe this')
 
             expect(result).toBe('# Transcribed content')
             expect(mockRequest).toHaveBeenCalledTimes(1)
@@ -137,7 +137,7 @@ describe('OllamaService', () => {
 
             const imageData = new ArrayBuffer(0)
             try {
-                await service.transcribeImage(imageData, 'test')
+                await service.transcribeImage(imageData, 'image/png', 'test')
                 expect.unreachable('Should have thrown')
             } catch (error) {
                 expect((error as Error).message).toContain('Ollama returned 404')

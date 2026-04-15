@@ -1,6 +1,10 @@
 import { TFile, TFolder } from 'obsidian'
 import type { App } from 'obsidian'
-import { IMAGE_EXTENSIONS, MAX_CONCURRENT_TRANSCRIPTIONS } from '../domain/constants'
+import {
+    IMAGE_EXTENSIONS,
+    IMAGE_MIME_TYPES,
+    MAX_CONCURRENT_TRANSCRIPTIONS
+} from '../domain/constants'
 import type { TranscriptionResult } from '../domain/transcription-result'
 import type { PluginSettings } from '../types/plugin-settings.intf'
 import type { TranscriptionCacheEntry } from '../types/plugin-settings.intf'
@@ -87,8 +91,11 @@ export class TranscriptionService {
             log(`Transcribing: ${file.path}`, 'debug')
 
             const imageData = await this.app.vault.readBinary(file)
+            const ext = file.extension.toLowerCase()
+            const mimeType = IMAGE_MIME_TYPES[ext] ?? 'application/octet-stream'
             const markdown = await this.getProvider().transcribeImage(
                 imageData,
+                mimeType,
                 settings.transcriptionPrompt
             )
 

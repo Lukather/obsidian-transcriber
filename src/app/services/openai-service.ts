@@ -81,7 +81,11 @@ export class OpenAiCompatibleService implements AiProviderService {
         return parsed.data.map((m) => m.id)
     }
 
-    async transcribeImage(imageData: ArrayBuffer, prompt: string): Promise<string> {
+    async transcribeImage(
+        imageData: ArrayBuffer,
+        mimeType: string,
+        prompt: string
+    ): Promise<string> {
         this.ensureAuth()
         const base64Image = arrayBufferToBase64(imageData)
         const body = {
@@ -96,7 +100,7 @@ export class OpenAiCompatibleService implements AiProviderService {
                         { type: 'text', text: prompt },
                         {
                             type: 'image_url',
-                            image_url: { url: `data:image/png;base64,${base64Image}` }
+                            image_url: { url: `data:${mimeType};base64,${base64Image}` }
                         }
                     ]
                 }

@@ -12,6 +12,7 @@ export class TranscriberSettingTab extends PluginSettingTab {
 
     private installedModels: string[] = []
     private isPullingModel = false
+    private modelDropdownContainerEl: HTMLElement | null = null
 
     constructor(app: App, plugin: TranscriberPlugin) {
         super(app, plugin)
@@ -21,28 +22,30 @@ export class TranscriberSettingTab extends PluginSettingTab {
     display(): void {
         const { containerEl } = this
         containerEl.empty()
+        this.modelDropdownContainerEl = null
 
         this.renderProviderSection(containerEl)
         this.renderProviderConfigSection(containerEl)
         this.renderTranscriptionSection(containerEl)
         this.renderSupportSection(containerEl)
 
-        // Load installed models asynchronously, then re-render the provider section
-        void this.loadInstalledModels(containerEl)
+        void this.loadInstalledModels()
     }
 
-    private async loadInstalledModels(containerEl: HTMLElement): Promise<void> {
+    private async loadInstalledModels(): Promise<void> {
         try {
             this.installedModels = await this.plugin.getActiveProvider().listModels()
         } catch {
             this.installedModels = []
         }
-        // Re-render settings with fresh model data
-        containerEl.empty()
-        this.renderProviderSection(containerEl)
-        this.renderProviderConfigSection(containerEl)
-        this.renderTranscriptionSection(containerEl)
-        this.renderSupportSection(containerEl)
+        this.refreshModelDropdown()
+    }
+
+    private refreshModelDropdown(): void {
+        const wrapperEl = this.modelDropdownContainerEl
+        if (!wrapperEl) return
+        wrapperEl.empty()
+        this.renderModelDropdownContent(wrapperEl)
     }
 
     private renderProviderSection(containerEl: HTMLElement): void {
@@ -269,7 +272,13 @@ export class TranscriberSettingTab extends PluginSettingTab {
     }
 
     private renderModelDropdown(containerEl: HTMLElement): void {
-        const setting = new Setting(containerEl)
+        const wrapperEl = containerEl.createDiv()
+        this.modelDropdownContainerEl = wrapperEl
+        this.renderModelDropdownContent(wrapperEl)
+    }
+
+    private renderModelDropdownContent(wrapperEl: HTMLElement): void {
+        const setting = new Setting(wrapperEl)
             .setName(SETTINGS_LABELS.model)
             .setDesc(
                 this.plugin.settings.provider === 'openai'
@@ -284,17 +293,32 @@ export class TranscriberSettingTab extends PluginSettingTab {
         setting.addDropdown((dropdown) => {
             const currentModel = this.plugin.settings.modelName
 
+            if (this.installedModels.length === 0) {
+                dropdown.addOption('', 'Loading models...')
+                dropdown.setValue('')
+                dropdown.setDisabled(true)
+                return
+            }
+
+            const modelAvailable = this.installedModels.includes(currentModel)
+
             for (const model of this.installedModels) {
                 dropdown.addOption(model, model)
             }
 
-            // If current model isn't in the installed list, show it with a warning
-            if (currentModel && !this.installedModels.includes(currentModel)) {
-                dropdown.addOption(currentModel, `${currentModel} (not found)`)
+            if (!modelAvailable) {
+                dropdown.addOption('', SETTINGS_LABELS.modelNotAvailable)
+                const placeholderEl = dropdown.selectEl.querySelector('option[value=""]')
+                if (placeholderEl) (placeholderEl as HTMLOptionElement).disabled = true
+                setting.descEl.createEl('p', {
+                    text: `Previously selected model "${currentModel}" is no longer available. Please select another.`,
+                    cls: 'mod-warning'
+                })
             }
 
-            dropdown.setValue(currentModel)
+            dropdown.setValue(modelAvailable ? currentModel : '')
             dropdown.onChange(async (value) => {
+                if (!value) return
                 this.plugin.settings = produce(
                     this.plugin.settings,
                     (draft: Draft<PluginSettings>) => {

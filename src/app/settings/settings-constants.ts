@@ -10,6 +10,7 @@ export const SETTINGS_LABELS = {
     model: 'Vision model',
     modelDesc: 'Select an installed Ollama vision model for transcription',
     noModelsFound: 'No models found. Start Ollama and test the connection.',
+    modelNotAvailable: 'Select a model...',
     testConnection: 'Test connection',
     testConnectionDesc: 'Verify that the Ollama server is reachable',
     testConnectionButton: 'Test',

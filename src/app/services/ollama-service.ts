@@ -151,7 +151,11 @@ export class OllamaService implements AiProviderService {
         log(`Model ${modelName} deleted successfully`, 'debug')
     }
 
-    async transcribeImage(imageData: ArrayBuffer, prompt: string): Promise<string> {
+    async transcribeImage(
+        imageData: ArrayBuffer,
+        _mimeType: string,
+        prompt: string
+    ): Promise<string> {
         const base64Image = arrayBufferToBase64(imageData)
 
         const requestBody: OllamaChatRequest = {

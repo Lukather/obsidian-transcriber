@@ -57,6 +57,7 @@ describe('OpenAiCompatibleService', () => {
 
         const result = await service.transcribeImage(
             new TextEncoder().encode('img').buffer,
+            'image/png',
             'prompt'
         )
         expect(result).toBe('# Transcribed')
@@ -67,6 +68,37 @@ describe('OpenAiCompatibleService', () => {
         }
         expect(callArgs.url).toContain('/chat/completions')
         expect(callArgs.headers['Authorization']).toBe('Bearer secret-key')
+    })
+
+    test('uses provided mimeType in image data URL', async () => {
+        mockRequest.mockResolvedValue({
+            status: 200,
+            json: {
+                id: 'chatcmpl-2',
+                object: 'chat.completion',
+                model: 'vision-model',
+                choices: [
+                    {
+                        index: 0,
+                        message: { role: 'assistant', content: '# Result' },
+                        finish_reason: 'stop'
+                    }
+                ]
+            }
+        } as unknown as RequestUrlResponse)
+
+        await service.transcribeImage(
+            new TextEncoder().encode('img').buffer,
+            'image/webp',
+            'prompt'
+        )
+
+        const callArgs = mockRequest.mock.calls[0]![0] as { body: string }
+        const body = JSON.parse(callArgs.body) as {
+            messages: Array<{ content: Array<{ type: string; image_url?: { url: string } }> }>
+        }
+        const imageContent = body.messages[0]?.content[1]
+        expect(imageContent?.image_url?.url).toMatch(/^data:image\/webp;base64,/)
     })
 
     test('fails fast when API key is missing', async () => {

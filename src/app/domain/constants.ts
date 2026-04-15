@@ -1,5 +1,16 @@
 export const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'avif', 'svg'] as const
 
+export const IMAGE_MIME_TYPES: Record<string, string> = {
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    bmp: 'image/bmp',
+    webp: 'image/webp',
+    avif: 'image/avif',
+    svg: 'image/svg+xml'
+}
+
 export const RECOMMENDED_MODELS = [
     'glm-ocr:latest',
     'maternion/LightOnOCR-2:1b',
