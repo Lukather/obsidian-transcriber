@@ -22,7 +22,7 @@ All core features implemented:
 
 ## Post-initial updates (fork)
 
-- Keep provider layer generic and OpenAI-compatible in naming and UX text.
-- Add migration-safe handling for legacy saved settings when keys/provider names change.
+- ✅ Keep provider layer generic and OpenAI-compatible in naming and UX text.
+- ✅ Add migration-safe handling for legacy saved settings when keys/provider names change.
 - Improve release workflow consistency for fork versions (`manifest.json`, `versions.json`, tag, release assets).
-- Evaluate a dedicated setting for unchanged-image skip behavior during overwrite runs.
+- ✅ Added dedicated `skipUnchangedImages` setting for unchanged-image skip behavior (independent of overwrite mode).

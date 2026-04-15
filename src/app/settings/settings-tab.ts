@@ -459,6 +459,23 @@ export class TranscriberSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings()
                 })
             })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.skipUnchangedImages)
+            .setDesc(SETTINGS_LABELS.skipUnchangedImagesDesc)
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.skipUnchangedImages)
+                    .onChange(async (value) => {
+                        this.plugin.settings = produce(
+                            this.plugin.settings,
+                            (draft: Draft<PluginSettings>) => {
+                                draft.skipUnchangedImages = value
+                            }
+                        )
+                        await this.plugin.saveSettings()
+                    })
+            })
     }
 
     private renderSupportSection(containerEl: HTMLElement): void {

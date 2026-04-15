@@ -56,22 +56,12 @@ export class TranscriptionService {
                 configSignature: this.createConfigSignature(settings)
             }
 
-            if (!settings.overwriteExisting) {
-                const existingFile = this.app.vault.getAbstractFileByPath(outputPath)
-                if (existingFile) {
-                    return {
-                        sourceFile: file.path,
-                        outputFile: outputPath,
-                        success: true,
-                        durationMs: Date.now() - startTime
-                    }
-                }
-            }
-
             const existingOutput = this.app.vault.getAbstractFileByPath(outputPath)
             const cached = settings.transcriptionCache[cacheKey]
+
+            // Skip if unchanged and skipUnchangedImages is enabled
             if (
-                settings.overwriteExisting &&
+                settings.skipUnchangedImages &&
                 existingOutput instanceof TFile &&
                 cached &&
                 cached.mtime === fingerprint.mtime &&
@@ -84,6 +74,16 @@ export class TranscriptionService {
                     outputFile: outputPath,
                     success: true,
                     skipped: true,
+                    durationMs: Date.now() - startTime
+                }
+            }
+
+            // Skip if overwrite is disabled and output already exists
+            if (!settings.overwriteExisting && existingOutput) {
+                return {
+                    sourceFile: file.path,
+                    outputFile: outputPath,
+                    success: true,
                     durationMs: Date.now() - startTime
                 }
             }

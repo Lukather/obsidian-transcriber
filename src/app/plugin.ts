@@ -80,6 +80,8 @@ export class TranscriberPlugin extends Plugin {
                 draft.includeSubfolders = loaded.includeSubfolders
             if (loaded.overwriteExisting !== undefined)
                 draft.overwriteExisting = loaded.overwriteExisting
+            if (loaded.skipUnchangedImages !== undefined)
+                draft.skipUnchangedImages = loaded.skipUnchangedImages
             if (loaded.transcriptionCache !== undefined)
                 draft.transcriptionCache = loaded.transcriptionCache
         })

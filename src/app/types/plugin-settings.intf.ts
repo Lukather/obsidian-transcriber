@@ -29,6 +29,7 @@ export interface PluginSettings {
     maxTokens: number
     includeSubfolders: boolean
     overwriteExisting: boolean
+    skipUnchangedImages: boolean
     transcriptionCache: Record<string, TranscriptionCacheEntry>
 }
 
@@ -44,5 +45,6 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     maxTokens: DEFAULT_MAX_TOKENS,
     includeSubfolders: false,
     overwriteExisting: false,
+    skipUnchangedImages: true,
     transcriptionCache: {}
 }

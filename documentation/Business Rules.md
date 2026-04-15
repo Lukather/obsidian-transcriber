@@ -27,7 +27,11 @@ When `overwriteExisting` is false (default), images that already have a correspo
 
 ## Unchanged Image Skip
 
-When `overwriteExisting` is true, unchanged images are skipped if their file fingerprint (`mtime` + `size`) and transcription config signature match the last successful transcription. This optimization applies to repeated runs and preserves output naming/location rules.
+When `skipUnchangedImages` is true, unchanged images are skipped if their file fingerprint (`mtime` + `size`) and transcription config signature match the last successful transcription. This optimization applies to repeated runs and preserves output naming/location rules.
+
+## Skip Unchanged Images Setting
+
+`skipUnchangedImages` (default: true) controls whether to skip images that have not changed since last transcription. This setting is independent of `overwriteExisting` and takes precedence when enabled.
 
 ## Concurrency
 

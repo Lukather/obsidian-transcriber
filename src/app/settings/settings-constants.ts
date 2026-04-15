@@ -40,5 +40,8 @@ export const SETTINGS_LABELS = {
     includeSubfolders: 'Include subfolders',
     includeSubfoldersDesc: 'When transcribing a folder, also process images in subfolders',
     overwriteExisting: 'Overwrite existing files',
-    overwriteExistingDesc: 'Overwrite existing markdown files when re-transcribing images'
+    overwriteExistingDesc: 'Overwrite existing markdown files when re-transcribing images',
+    skipUnchangedImages: 'Skip unchanged images',
+    skipUnchangedImagesDesc:
+        'Skip images that have not changed since last transcription (optimization)'
 } as const
