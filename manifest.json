@@ -2,7 +2,7 @@
     "id": "obsidian-transcriber",
     "name": "Transcriber",
     "description": "Transcribe images to markdown using Ollama or OpenAI-compatible vision models",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "minAppVersion": "1.4.0",
     "isDesktopOnly": true,
     "author": "Lorenzo Strambi"
