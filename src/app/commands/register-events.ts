@@ -100,7 +100,29 @@ async function transcribeFileWithNotice(plugin: TranscriberPlugin, file: TFile):
         const result = await plugin.transcriptionService.transcribeFile(file)
         progress.hide()
         if (result.success) {
-            new Notice(`Transcribed ${file.name} successfully`)
+            if (!plugin.settings.autoFilingEnabled) {
+                new Notice(`Transcribed ${file.name} successfully`)
+            } else {
+                const outputFile = plugin.app.vault.getAbstractFileByPath(result.outputFile)
+                if (!(outputFile instanceof TFile)) {
+                    new Notice(
+                        `Transcribed ${file.name} (auto-filing: output file not found at ${result.outputFile})`
+                    )
+                } else {
+                    const logEntry = await plugin.filingService.processAfterTranscription(
+                        outputFile,
+                        file
+                    )
+                    if (logEntry) {
+                        await plugin.filingLogger.logEntry(logEntry)
+                        plugin.showFilingNotice(file.name, logEntry.destinationPath)
+                    } else {
+                        new Notice(
+                            `Transcribed ${file.name} (auto-filing did not run — check the developer console)`
+                        )
+                    }
+                }
+            }
         } else {
             new Notice(`Failed to transcribe ${file.name}: ${result.error}`)
         }

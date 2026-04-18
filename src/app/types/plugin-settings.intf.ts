@@ -8,6 +8,12 @@ import {
     DEFAULT_TOP_P,
     DEFAULT_TRANSCRIPTION_PROMPT
 } from '../domain/constants'
+import {
+    DEFAULT_FILING_MODEL,
+    DEFAULT_INBOX_FOLDER_PATH,
+    DEFAULT_LOG_NOTE_PATH,
+    DEFAULT_MAX_LINES_TO_SCAN
+} from './filing-settings.intf'
 
 export type AiProvider = 'ollama' | 'openai'
 
@@ -31,6 +37,12 @@ export interface PluginSettings {
     overwriteExisting: boolean
     skipUnchangedImages: boolean
     transcriptionCache: Record<string, TranscriptionCacheEntry>
+    // Auto-filing settings
+    autoFilingEnabled: boolean
+    inboxFolderPath: string
+    filingModel: string
+    logNotePath: string
+    maxLinesToScan: number
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -46,5 +58,11 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     includeSubfolders: false,
     overwriteExisting: false,
     skipUnchangedImages: true,
-    transcriptionCache: {}
+    transcriptionCache: {},
+    // Auto-filing settings
+    autoFilingEnabled: false,
+    inboxFolderPath: DEFAULT_INBOX_FOLDER_PATH,
+    filingModel: DEFAULT_FILING_MODEL,
+    logNotePath: DEFAULT_LOG_NOTE_PATH,
+    maxLinesToScan: DEFAULT_MAX_LINES_TO_SCAN
 }

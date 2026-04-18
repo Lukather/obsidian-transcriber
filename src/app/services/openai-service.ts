@@ -81,6 +81,41 @@ export class OpenAiCompatibleService implements AiProviderService {
         return parsed.data.map((m) => m.id)
     }
 
+    async classifyText(prompt: string, model: string): Promise<string> {
+        this.ensureAuth()
+        log(
+            `Sending classification request to ${this.baseUrl}/chat/completions (model: ${model})`,
+            'debug'
+        )
+
+        const response = await this.requestFn({
+            url: `${this.baseUrl}/chat/completions`,
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            contentType: 'application/json',
+            body: JSON.stringify({
+                model,
+                messages: [{ role: 'user', content: prompt }]
+            }),
+            throw: false
+        })
+
+        if (response.status !== 200) {
+            throw new Error(
+                `OpenAI-compatible provider returned ${response.status}: ${response.text}`
+            )
+        }
+
+        const data: unknown = response.json
+        const parsed: OpenAiChatCompletionsResponse =
+            openAiChatCompletionsResponseSchema.parse(data)
+        const content = parsed.choices[0]?.message.content?.trim()
+        if (!content) {
+            throw new Error('OpenAI-compatible response did not include classification content')
+        }
+        return content
+    }
+
     async transcribeImage(
         imageData: ArrayBuffer,
         mimeType: string,

@@ -1,10 +1,12 @@
-import { Plugin } from 'obsidian'
+import { Plugin, Notice } from 'obsidian'
 import { DEFAULT_SETTINGS } from './types/plugin-settings.intf'
 import type { PluginSettings } from './types/plugin-settings.intf'
 import { TranscriberSettingTab } from './settings/settings-tab'
 import { OllamaService } from './services/ollama-service'
 import { OpenAiCompatibleService } from './services/openai-service'
 import { TranscriptionService } from './services/transcription-service'
+import { FilingService } from './services/filing-service'
+import { FilingLogger } from './services/filing-logger'
 import { registerCommands } from './commands/register-commands'
 import { registerEvents } from './commands/register-events'
 import { log } from '../utils/log'
@@ -18,6 +20,8 @@ export class TranscriberPlugin extends Plugin {
     ollamaService!: OllamaService
     openAiService!: OpenAiCompatibleService
     transcriptionService!: TranscriptionService
+    filingService!: FilingService
+    filingLogger!: FilingLogger
 
     override async onload(): Promise<void> {
         log('Initializing', 'debug')
@@ -44,6 +48,14 @@ export class TranscriberPlugin extends Plugin {
                 await this.saveSettings()
             }
         )
+
+        // Initialize filing services
+        this.filingService = new FilingService(
+            this.app,
+            () => this.settings,
+            () => this.getActiveProvider()
+        )
+        this.filingLogger = new FilingLogger(this.app, () => this.settings.logNotePath)
 
         registerCommands(this)
         registerEvents(this)
@@ -84,6 +96,13 @@ export class TranscriberPlugin extends Plugin {
                 draft.skipUnchangedImages = loaded.skipUnchangedImages
             if (loaded.transcriptionCache !== undefined)
                 draft.transcriptionCache = loaded.transcriptionCache
+            // Auto-filing settings
+            if (loaded.autoFilingEnabled !== undefined)
+                draft.autoFilingEnabled = loaded.autoFilingEnabled
+            if (loaded.inboxFolderPath !== undefined) draft.inboxFolderPath = loaded.inboxFolderPath
+            if (loaded.filingModel !== undefined) draft.filingModel = loaded.filingModel
+            if (loaded.logNotePath !== undefined) draft.logNotePath = loaded.logNotePath
+            if (loaded.maxLinesToScan !== undefined) draft.maxLinesToScan = loaded.maxLinesToScan
         })
 
         log('Settings loaded', 'debug', this.settings)
@@ -102,6 +121,10 @@ export class TranscriberPlugin extends Plugin {
             this.settings.maxTokens
         )
         log('Settings saved', 'debug')
+    }
+
+    showFilingNotice(filename: string, destinationPath: string): void {
+        new Notice(`Filed: ${filename} → ${destinationPath}`, 5000)
     }
 
     getActiveProvider(): AiProviderService {

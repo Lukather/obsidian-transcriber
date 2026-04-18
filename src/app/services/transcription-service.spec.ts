@@ -53,7 +53,8 @@ describe('TranscriptionService', () => {
         const mockProvider: AiProviderService = {
             testConnection: async () => ({ ok: true, models: [] }),
             listModels: async () => [],
-            transcribeImage: mockProviderTranscribe
+            transcribeImage: mockProviderTranscribe,
+            classifyText: mock(() => Promise.resolve(''))
         }
 
         service = new TranscriptionService(

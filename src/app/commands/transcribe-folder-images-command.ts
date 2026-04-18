@@ -49,16 +49,39 @@ async function transcribeSelectedImages(plugin: TranscriberPlugin, files: TFile[
             async (file: TFile) => {
                 completed++
                 progress.update(`Transcribing (${completed}/${files.length}): ${file.name}`)
-                return plugin.transcriptionService.transcribeFile(file)
+                return { file, result: await plugin.transcriptionService.transcribeFile(file) }
             }
         )
 
         progress.hide()
 
-        const succeeded = results.filter((r) => r.success).length
-        const failed = results.filter((r) => !r.success).length
+        const succeeded = results.filter((r) => r.result.success).length
+        const failed = results.filter((r) => !r.result.success).length
 
-        if (failed === 0) {
+        const filedEntries = []
+        for (const item of results) {
+            if (item.result.success && item.result.outputFile) {
+                const outputFile = plugin.app.vault.getAbstractFileByPath(item.result.outputFile)
+                if (outputFile instanceof TFile) {
+                    const logEntry = await plugin.filingService.processAfterTranscription(
+                        outputFile,
+                        item.file
+                    )
+                    if (logEntry) {
+                        filedEntries.push(logEntry)
+                        await plugin.filingLogger.logEntry(logEntry)
+                    }
+                }
+            }
+        }
+
+        const filedCount = filedEntries.length
+        if (filedCount > 0) {
+            new Notice(
+                `Transcribed ${succeeded} image${succeeded !== 1 ? 's' : ''}, ` +
+                    `${filedCount} filed, ${failed} failed`
+            )
+        } else if (failed === 0) {
             new Notice(`Transcribed ${succeeded} image${succeeded !== 1 ? 's' : ''} successfully`)
         } else {
             new Notice(

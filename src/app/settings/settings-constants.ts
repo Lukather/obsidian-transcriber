@@ -43,5 +43,21 @@ export const SETTINGS_LABELS = {
     overwriteExistingDesc: 'Overwrite existing markdown files when re-transcribing images',
     skipUnchangedImages: 'Skip unchanged images',
     skipUnchangedImagesDesc:
-        'Skip images that have not changed since last transcription (optimization)'
+        'Skip images that have not changed since last transcription (optimization)',
+    // Auto-filing settings
+    autoFilingHeading: 'Auto-filing',
+    autoFilingEnabled: 'Enable auto-filing',
+    autoFilingEnabledDesc:
+        'Automatically file transcribed notes using LLM classification of tags in the content',
+    inboxFolderPath: 'Inbox folder',
+    inboxFolderPathDesc:
+        'Fallback folder when no tags are found or LLM classification fails. Created automatically if it does not exist.',
+    filingModel: 'Filing model',
+    filingModelDesc:
+        'Model used to classify the filing destination. Defaults to the transcription model.',
+    filingModelSameAsTranscription: 'Same as transcription model',
+    logNotePath: 'Filing log note',
+    logNotePathDesc: 'Path to the note where filing actions are logged',
+    maxLinesToScan: 'Max lines to scan for tags',
+    maxLinesToScanDesc: 'Number of lines at the start of the note to scan for filing tags'
 } as const

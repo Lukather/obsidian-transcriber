@@ -13,6 +13,7 @@ export class TranscriberSettingTab extends PluginSettingTab {
     private installedModels: string[] = []
     private isPullingModel = false
     private modelDropdownContainerEl: HTMLElement | null = null
+    private filingModelDropdownContainerEl: HTMLElement | null = null
 
     constructor(app: App, plugin: TranscriberPlugin) {
         super(app, plugin)
@@ -23,10 +24,12 @@ export class TranscriberSettingTab extends PluginSettingTab {
         const { containerEl } = this
         containerEl.empty()
         this.modelDropdownContainerEl = null
+        this.filingModelDropdownContainerEl = null
 
         this.renderProviderSection(containerEl)
         this.renderProviderConfigSection(containerEl)
         this.renderTranscriptionSection(containerEl)
+        this.renderFilingSection(containerEl)
         this.renderSupportSection(containerEl)
 
         void this.loadInstalledModels()
@@ -39,6 +42,7 @@ export class TranscriberSettingTab extends PluginSettingTab {
             this.installedModels = []
         }
         this.refreshModelDropdown()
+        this.refreshFilingModelDropdown()
     }
 
     private refreshModelDropdown(): void {
@@ -46,6 +50,13 @@ export class TranscriberSettingTab extends PluginSettingTab {
         if (!wrapperEl) return
         wrapperEl.empty()
         this.renderModelDropdownContent(wrapperEl)
+    }
+
+    private refreshFilingModelDropdown(): void {
+        const wrapperEl = this.filingModelDropdownContainerEl
+        if (!wrapperEl) return
+        wrapperEl.empty()
+        this.renderFilingModelDropdownContent(wrapperEl)
     }
 
     private renderProviderSection(containerEl: HTMLElement): void {
@@ -476,6 +487,115 @@ export class TranscriberSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings()
                     })
             })
+    }
+
+    private renderFilingSection(containerEl: HTMLElement): void {
+        new Setting(containerEl).setName(SETTINGS_LABELS.autoFilingHeading).setHeading()
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.autoFilingEnabled)
+            .setDesc(SETTINGS_LABELS.autoFilingEnabledDesc)
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.autoFilingEnabled).onChange(async (value) => {
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.autoFilingEnabled = value
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.inboxFolderPath)
+            .setDesc(SETTINGS_LABELS.inboxFolderPathDesc)
+            .addText((text) => {
+                text.setValue(this.plugin.settings.inboxFolderPath).onChange(async (value) => {
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.inboxFolderPath = value
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+
+        this.renderFilingModelDropdown(containerEl)
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.logNotePath)
+            .setDesc(SETTINGS_LABELS.logNotePathDesc)
+            .addText((text) => {
+                text.setValue(this.plugin.settings.logNotePath).onChange(async (value) => {
+                    this.plugin.settings = produce(
+                        this.plugin.settings,
+                        (draft: Draft<PluginSettings>) => {
+                            draft.logNotePath = value
+                        }
+                    )
+                    await this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(containerEl)
+            .setName(SETTINGS_LABELS.maxLinesToScan)
+            .setDesc(SETTINGS_LABELS.maxLinesToScanDesc)
+            .addText((text) => {
+                text.setValue(String(this.plugin.settings.maxLinesToScan)).onChange(
+                    async (value) => {
+                        const parsed = Number.parseInt(value, 10)
+                        if (Number.isNaN(parsed) || parsed < 1) return
+                        this.plugin.settings = produce(
+                            this.plugin.settings,
+                            (draft: Draft<PluginSettings>) => {
+                                draft.maxLinesToScan = parsed
+                            }
+                        )
+                        await this.plugin.saveSettings()
+                    }
+                )
+            })
+    }
+
+    private renderFilingModelDropdown(containerEl: HTMLElement): void {
+        const wrapperEl = containerEl.createDiv()
+        this.filingModelDropdownContainerEl = wrapperEl
+        this.renderFilingModelDropdownContent(wrapperEl)
+    }
+
+    private renderFilingModelDropdownContent(wrapperEl: HTMLElement): void {
+        const setting = new Setting(wrapperEl)
+            .setName(SETTINGS_LABELS.filingModel)
+            .setDesc(SETTINGS_LABELS.filingModelDesc)
+
+        setting.addDropdown((dropdown) => {
+            if (this.installedModels.length === 0) {
+                dropdown.addOption('', 'Loading models...')
+                dropdown.setValue('')
+                dropdown.setDisabled(true)
+                return
+            }
+
+            dropdown.addOption('', SETTINGS_LABELS.filingModelSameAsTranscription)
+            for (const model of this.installedModels) {
+                dropdown.addOption(model, model)
+            }
+
+            const current = this.plugin.settings.filingModel
+            dropdown.setValue(this.installedModels.includes(current) ? current : '')
+
+            dropdown.onChange(async (value) => {
+                this.plugin.settings = produce(
+                    this.plugin.settings,
+                    (draft: Draft<PluginSettings>) => {
+                        draft.filingModel = value
+                    }
+                )
+                await this.plugin.saveSettings()
+            })
+        })
     }
 
     private renderSupportSection(containerEl: HTMLElement): void {

@@ -151,6 +151,30 @@ export class OllamaService implements AiProviderService {
         log(`Model ${modelName} deleted successfully`, 'debug')
     }
 
+    async classifyText(prompt: string, model: string): Promise<string> {
+        log(`Sending classification request to ${this.baseUrl}/api/chat (model: ${model})`, 'debug')
+
+        const response = await this.requestFn({
+            url: `${this.baseUrl}/api/chat`,
+            method: 'POST',
+            contentType: 'application/json',
+            body: JSON.stringify({
+                model,
+                messages: [{ role: 'user', content: prompt }],
+                stream: false
+            }),
+            throw: false
+        })
+
+        if (response.status !== 200) {
+            throw new Error(`Ollama returned ${response.status}: ${response.text}`)
+        }
+
+        const data: unknown = response.json
+        const parsed: OllamaChatResponse = ollamaChatResponseSchema.parse(data)
+        return parsed.message.content
+    }
+
     async transcribeImage(
         imageData: ArrayBuffer,
         _mimeType: string,
