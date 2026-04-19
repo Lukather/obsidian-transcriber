@@ -25,6 +25,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 - **register-commands.ts** — Registers command palette commands
 - **register-events.ts** — Registers context menu (file-menu) events for files and folders, and editor-menu events for image embeds
+- **register-nn-menus.ts** — Registers Notebook Navigator context menu items (requires NN ≥ v1.2.0)
 - **transcribe-image-command.ts** — `transcribe-current-image` command (checkCallback, active only on image files)
 - **transcribe-note-images-command.ts** — `transcribe-note-images` command (checkCallback, active on `.md` files; batch-transcribes all embedded images)
 - **transcribe-folder-images-command.ts** — `transcribe-folder-images` command (folder picker → image multi-select → batch transcribe)
@@ -63,7 +64,7 @@ Re-exports `TranscriberPlugin` as the default export for Obsidian.
 
 ## Data Flow
 
-1. User triggers transcription (command palette, file explorer context menu, or editor context menu)
+1. User triggers transcription (command palette, file explorer context menu, editor context menu, or Notebook Navigator context menu when NN >= v1.2.0)
 2. TranscriptionService reads image binary from vault
 3. Active provider service encodes image to base64 and sends it to either Ollama (`/api/chat`) or an OpenAI-compatible API (`/chat/completions`)
 4. Provider returns Markdown text

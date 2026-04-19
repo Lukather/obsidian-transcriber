@@ -9,6 +9,7 @@ import { FilingService } from './services/filing-service'
 import { FilingLogger } from './services/filing-logger'
 import { registerCommands } from './commands/register-commands'
 import { registerEvents } from './commands/register-events'
+import { registerNnMenus } from './commands/register-nn-menus'
 import { log } from '../utils/log'
 import { produce } from 'immer'
 import type { Draft } from 'immer'
@@ -22,6 +23,7 @@ export class TranscriberPlugin extends Plugin {
     transcriptionService!: TranscriptionService
     filingService!: FilingService
     filingLogger!: FilingLogger
+    private nnMenusCleanup: (() => void) | null = null
 
     override async onload(): Promise<void> {
         log('Initializing', 'debug')
@@ -59,12 +61,14 @@ export class TranscriberPlugin extends Plugin {
 
         registerCommands(this)
         registerEvents(this)
+        this.nnMenusCleanup = registerNnMenus(this)
 
         this.addSettingTab(new TranscriberSettingTab(this.app, this))
     }
 
     override onunload(): void {
         // Cleanup handled by Obsidian's register* helpers
+        this.nnMenusCleanup?.()
     }
 
     async loadSettings(): Promise<void> {
